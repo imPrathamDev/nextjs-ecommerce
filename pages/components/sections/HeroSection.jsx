@@ -31,13 +31,6 @@ function HeroSection() {
       </p>
 
       <div className="flex flex-wrap gap-4 mt-8 text-center">
-        {/* <a className="block w-full px-12 py-3 text-sm font-medium text-white rounded shadow bg-primary sm:w-auto active:bg-rose-500 hover:bg-primary focus:outline-none focus:ring" href="/get-started">
-          Get Started
-        </a>
-
-        <a className="block w-full px-12 py-3 text-sm font-medium bg-white rounded shadow text-primary sm:w-auto hover:text-primary active:text-rose-500 focus:outline-none focus:ring" href="/about">
-          Learn More
-        </a> */}
 
         <PrimaryButton>
             Shop Toady

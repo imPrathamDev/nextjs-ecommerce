@@ -16,6 +16,7 @@ module.exports = {
         'primary-semi-light': '#D8CCA3',
         'primary-light': '#EDDFB3',
         'white': '#FAFAFA',
+        'black': '#212121',
       },
     },
   },

@@ -2,7 +2,14 @@ import React from 'react'
 
 function NavBar() {
   return (
-<header className="border-b border-gray-100 shadow-md">
+    <>
+    <div className="px-4 py-3 mb-1 text-white bg-black">
+    <p className="text-sm font-medium text-center">
+        Wow our new season sale is live!
+        <a className="underline font-Cinzel text-primary-light ml-1" href="/alpinejs"> Learn More &rarr; </a>
+    </p>
+    </div>
+    <header className="border-b border-gray-100 shadow-md">
   <div
     className="flex items-center justify-between h-16 mx-auto max-w-screen-2xl sm:px-6 lg:px-8"
   >
@@ -142,6 +149,7 @@ function NavBar() {
     </div>
   </div>
 </header>
+    </>
   )
 }
 
