@@ -11,13 +11,13 @@ function Features() {
     ]
 
   return (
-    <div className='mx-10 py-6 grid grid-cols-2 xl:grid-cols-4 items-center gap-2 justify-center'>
+    <div className='mx-10 py-8 grid grid-cols-2 xl:grid-cols-4 items-center gap-2 justify-center'>
 
-    {featuresList.map((data, key) => (<div className='flex items-center cursor-pointer group'>
-            <div className='rounded-full bg-primary-dark p-3 group-hover:bg-primary-light transition-colors duration-300'>
+    {featuresList.map((data, key) => (<div className='flex flex-col xl:flex-row lg:flex-row gap-2 items-center cursor-pointer group'>
+            <div className='rounded-full bg-primary-dark p-3 group-hover:bg-primary-light transition-colors duration-300' key={key}>
             {data.icon}
             </div>
-            <div className='flex flex-col ml-3'>
+            <div className='flex flex-col text-center xl:text-left lg:text-left'>
                 <h3 className='text-base font-semibold'>{data.title}</h3>
                 <p className='text-sm'>{data.description}</p>
             </div>

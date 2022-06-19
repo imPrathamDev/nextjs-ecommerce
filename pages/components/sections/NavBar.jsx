@@ -124,7 +124,7 @@ function NavBar() {
           <span className="hidden sm:block">
             <a
               href="/search"
-              className="block p-6 border-b-4 border-transparent hover:border-primary"
+              className="block p-6 border-b-4 border-transparent hover:border-primary group"
             >
               <svg
                 className="w-4 h-4 group-hover:text-primary transition-all"

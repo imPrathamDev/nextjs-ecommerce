@@ -7,7 +7,7 @@ import SecondaryButton from '../buttons/SecondaryButton'
 
 function HeroSection() {
   return (
-<section className="relative bg-white">
+<section className="relative bg-primary-white">
   <Image
     className="absolute inset-0 object-[75%] sm:object-[25%] object-cover w-full h-full opacity-25 sm:opacity-100"
     src={banner}
@@ -15,13 +15,13 @@ function HeroSection() {
     layout="fill"
   />
 
-  <div className="hidden sm:block sm:inset-0 sm:absolute sm:bg-gradient-to-r sm:from-white sm:to-transparent"></div>
+  <div className="hidden sm:block sm:inset-0 sm:absolute sm:bg-gradient-to-r sm:from-primary-white sm:to-transparent"></div>
 
   <div className="relative max-w-screen-xl px-4 py-24 lg:h-1/2 lg:items-center lg:flex mx-6">
     <div className="max-w-xl text-center sm:text-left">
       <h1 className="text-3xl font-extrabold sm:text-5xl">
-        Let us find your
-        <strong className="font-Cinzel text-primary-dark sm:block truncate">
+        Let us find your 
+        <strong className="font-Cinzel text-primary-dark sm:block">
         personalized Jewellery.
         </strong>
       </h1>
