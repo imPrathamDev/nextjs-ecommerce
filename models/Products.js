@@ -1,13 +1,82 @@
-const mongoose = require('mongoose');
+import { Schema, model, models } from 'mongoose';
 
-const ProductSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    slug: { type: String, required: true },
-    desc: { type: String, required: true },
-    shortDesc: { type: String, required: true },
-    category:  { type: String, required: true },
-    availableQty: { type: Number,  },
-    tags: { type: Array, },
-}, { timestamps: true });
+const ProductSchema = new Schema({
+    title: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    discPrice: {
+        type: Number,
+        required: true,
+    },
+    slug: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    
+    sku: {
+            type: String,
+            required: true,
+            unique: true    
+    },
+    desc: {
+        type: String,
+        required: true
+    },
+    shortDesc: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    availableQty: {
+        type: Number,
+        required: true
+    },
+    images: {
+        type: Array,
+        default: []
+    },
+    rating: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    numReviews: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    color: {
+        type: String,
+        default: "None",
+    },
+    stone: {
+        type: String,
+        default: "None",
+    },
+    style: {
+        type: String,
+        default: "None",
+    },
+    feature: {
+        type: String,
+        default: "None",
+    }
+}, {
+    timestamps: true
+});
 
-export default mongoose.model('Product', ProductSchema);
+
+const Product = models.Product || model('Product', ProductSchema);
+
+export default Product;

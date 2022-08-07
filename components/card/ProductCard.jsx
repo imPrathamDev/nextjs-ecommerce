@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react';
 import { CartState } from '../../context/Context'
 
@@ -6,29 +7,27 @@ import { CartState } from '../../context/Context'
 function ProductCard({ allData }) {
   const { state: { cartItems }, dispatch } = CartState();
   const [cartData, setCartData] = React.useState([]);
-
   React.useEffect(() => {
     setCartData(cartItems);
   }, [cartItems])
 
   return (
     <div className="w-fit px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
-      <div className="aspect-w-1 aspect-h-1">
-        <Image src={allData.img} className="object-cover rounded-md" width={'250px'} height={'230px'} />
+      <div className="">
+        <Image src={allData?.images?.[0]?.url} className="object-cover rounded-md" width={'250px'} height={'230px'} />
       </div>
-
       <div className="mt-2">
-        <h5 className="text-primary-black font-Cinzel font-medium transition-all group-hover:text-primary">
-          {allData.title}
+        <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline">
+        <Link href={`http://localhost:3000/shop/${allData?.slug}`}>{allData.title}</Link>
         </h5>
 
         <p className="text-sm text-gray-700">
-          <small className='text-xs'>$</small>
-          {allData.price}
+          <small className='text-xs'>₹</small>
+          {allData.discPrice}
         </p>
       </div>
       <div className='mt-1 opacity-0 transform translate-y-14 transition group-hover:opacity-100 group-hover:translate-y-0 duration-300'>
-        {cartData.some(p => p.id === allData.id) ? (
+        {cartData.some(p => p._id === allData._id) ? (
           <button className='text-base font-Cinzel text-primary-dark font-bold' onClick={() => dispatch({
             type: 'REMOVE_FROM_CART',
             payload: allData
