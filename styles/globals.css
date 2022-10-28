@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  @font-face {
+    font-family: "Brown Sugar";
+    src: url("/fonts/Brown-Sugar.ttf");
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+  }
+}
 
 @layer components {
   .custom-scrollbar::-webkit-scrollbar {
@@ -14,13 +23,14 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #EDDFB3;
+    background-color: #eddfb3;
     width: 5px;
     border-radius: 10px;
   }
 
   .custom-scrollbar-dark::-webkit-scrollbar-thumb {
-    background-color: #EDDFB3 }
+    background-color: #eddfb3;
+  }
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -31,11 +41,22 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
 /* Removing blue effect on hover */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  -webkit-appearance: none;
+  @apply bg-primary;
+
+  /* @apply w-6 h-6 appearance-none pointer-events-auto; */
 }

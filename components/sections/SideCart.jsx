@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { CartState } from '../../context/Context'
 
-import emptyCart from '../../public/empty_cart.svg'
+import emptyCart from '../../public/empty-image.png'
 
 // export async function getServerSideProps(context) {
 //   const response = await fetch('http://localhost:3000/api/products/getProducts');
@@ -29,7 +29,7 @@ function SideCart({ isCartOpen, setIsCartOpen }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('http://localhost:3000/api/products/getProducts');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts`);
       const newData = await response.json();
       setProducts(newData.products);
     }
@@ -48,7 +48,7 @@ function SideCart({ isCartOpen, setIsCartOpen }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 backdrop-blur-sm bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-hidden">
@@ -82,7 +82,9 @@ function SideCart({ isCartOpen, setIsCartOpen }) {
                         </div>
                       </div>
                       {!cartItems.length > 0 && (<div className='w-full h-fit text-center flex flex-col mt-12 items-center justify-center'>
-                        {/* <Image src={emptyCart} width={'160px'} height={'200px'} className='my-2' /> */}
+                        <div className='relative w-60 h-60 overflow-hidden'>
+                        <Image src={emptyCart} layout='fill' className='my-2 object-center object-cover' />
+                        </div>
                         <p className='text-lg font-medium'>Your Cart is Empty!</p>
                       </div>)}
                       <div className="mt-8">
@@ -170,7 +172,7 @@ function SideCart({ isCartOpen, setIsCartOpen }) {
                       <div className=''>
                         <button className="mt-6 text-center w-full" onClick={() => {
                           setIsCartOpen(false);
-                          router.push('http://localhost:3000/checkout');
+                          router.push('/checkout');
                         }}>
                           <div className="relative w-full inline-block group focus:outline-none focus:ring cursor-pointer" href="/download">
                             <span className="absolute w-full inset-0 transition-transform translate-x-1.5 translate-y-1.5 bg-primary-semi-light group-hover:translate-y-0 group-hover:translate-x-0"></span>

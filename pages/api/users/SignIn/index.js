@@ -1,8 +1,12 @@
 import connectdb from "../../../../utils/connectMongo";
 import User from "../../../../models/Users";
-const CryptoJS = require('crypto-js')
-import { sign } from 'jsonwebtoken';
-import { serialize } from 'cookie';
+import CryptoJS from 'crypto-js'
+import rateLimit from "../../../../utils/rateLimit";
+
+const limiter = rateLimit({
+    interval: 60 * 1000, // 60 seconds
+    uniqueTokenPerInterval: 500, // Max 500 users per second
+})
 
 /*
 *function for checking is email address is correct or no
@@ -19,42 +23,24 @@ const validateEmail = (email) => {
 
 export default async function handler(req, res) {
     try {
+        await limiter.check(res, 5, 'CACHE_TOKEN')
         if (req.method == 'POST') {
             if (validateEmail(req.body.email)) {
-                console.log('CONNECTING TO DB');
+                console.log('PASSWORD START');
                 await connectdb();
-                console.log('CONNECTED TO DB');
 
                 const checkUser = await User.findOne({ email: req.body.email });
                 if (checkUser) {
                     const bytes = CryptoJS.AES.decrypt(checkUser.password, process.env.CRYPTO_JS_SECRET_KEY);
                     const decryptPass = bytes.toString(CryptoJS.enc.Utf8);
                     if (decryptPass == req.body.password) {
-                        const token = sign(
-                    {
-                    exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, id: checkUser._id, firstName: checkUser.firstName, lastName: checkUser.lastName, email: checkUser.email, avatar: checkUser.avatar, type: checkUser.type 
-                    }, process.env.JWT_SECRET_KEY);
-                            if (token) {
-                                //serializing cookie data
-                                const serialized = await serialize("userJWT", token, {
-                                    httpOnly: true,
-                                    secure: process.env.NODE_ENV !== 'development',
-                                    sameSite: 'strict',
-                                    maxAge: 60 * 60 * 24 * 30,
-                                    path: '/'
-                                });
-                                //setting Header
-                                res.setHeader('Set-Cookie', serialized);
-                                console.log(token);
-                                res.json({ success: true, message: 'User Successfully Login', token });
-                            } else {
-                                res.json({ success: false, error: "Don't know what happened" });
-                            }
+                        console.log('PASSWORD END');
+                        res.json({ success: true, _id: checkUser?._id, name: `${checkUser?.firstName} ${checkUser?.lastName}`, email: checkUser?.email, image: checkUser?.avatar, type: checkUser?.type })
                     } else {
-                        res.json({ success: false, error: 'Invalid Password' })
+                        res.json({ success: false, error: 'Invalid Request' })
                     }
                 } else {
-                    res.json({ success: false, error: 'No User Found' })
+                    res.json({ success: false, error: 'Invalid Request' })
                 }
             } else {
                 res.json({ success: false, error: 'Invalid Email' })
@@ -62,7 +48,7 @@ export default async function handler(req, res) {
         } else {
             res.json({ success: false, error: 'This method is not allowed' });
         }
-    } catch (error) {
-        res.json({ success: false, error: error.message })
+    } catch {
+        res.json({ success: false, error: 'Limit exceeded' });
     }
 }

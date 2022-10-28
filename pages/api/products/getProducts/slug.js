@@ -15,7 +15,7 @@ export default async function handler(req, res){
     const exists = await Product.exists({ slug: slug });
     console.log('FETCHED DATA BY SLUG');
     if(exists){
-        const product = await Product.find({ slug: slug });
+        const product = await Product.findOne({ slug: slug }).populate('collections._id');
         res.status(202).json({ success: true, product });        
     } else {
         res.json({ success: false, error: 'Not Exists' });

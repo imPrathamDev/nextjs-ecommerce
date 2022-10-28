@@ -46,7 +46,9 @@ export default async function handler(req, res) {
                         currency: "INR",
                         receipt: shortid.generate(),
                         notes: {
-                            "isGiftWrap": req.body.giftWrap ? 'Yes' : 'No'
+                            "isGiftWrap": req.body.giftWrap ? 'Yes' : 'No',
+                            "Coupon": req.body.couponCode || 'NOT APPLIED',
+                            "Email": req.body.userEmail
                         }
                     }
                     const order = await instance.orders.create(options);
@@ -70,7 +72,10 @@ export default async function handler(req, res) {
                         paymentInfo: 'na',
                         trackingId: 'na',
                         phone: req.body.phone,
-                        billingAddress: JSON.stringify(req.body.billingAddress)
+                        billingAddress: JSON.stringify(req.body.billingAddress),
+                        isDiscountCode: req.body.isDiscountCode,
+                        discountCodeId: req.body.discountCodeId,
+                        discount: req.body.discount
                     })
                     res.json({ success: true, id: order.id, amount: order.amount, currency: order.currency })
                 } catch (error) {

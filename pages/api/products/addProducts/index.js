@@ -6,10 +6,7 @@ export default async function handler(req, res) {
   try {
     if (req.method == 'POST') {
       const { title } = req.body;
-      console.log('CONNECTING TO DATABASE')
       await connectdb();
-      console.log('COONECTED TO DATABASE')
-      console.log('CREATING DOCU...')
       // for(let i = 0; i < req.body.length; i++){
       function convertToSlug(Text) {
         return Text.toLowerCase()
@@ -17,8 +14,13 @@ export default async function handler(req, res) {
           .replace(/[^\w-]+/g, '');
       }
 
-      const products = await Product.create({ ...req.body, slug: convertToSlug(title) });
+      const product = await Product.create({ ...req.body, slug: convertToSlug(title) });
       console.log('CREATED DOCUMENT ')
+      await Product.findByIdAndUpdate(product?._id, {
+        collections: [{
+          _id: product?._id
+        }, ...product?.collections]
+      })
       // }
       res.status(200).json({ success: true, products });
     } else {

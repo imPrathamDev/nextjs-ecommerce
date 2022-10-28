@@ -10,7 +10,7 @@ export default async function handler(req, res){
             console.log('UPDATING DATA');
             const products = await Product.findByIdAndUpdate(req.body._id, req.body);
             console.log('UPDATED DATA');
-            res.json({ success: true, message: 'Product successfully updated' });
+            res.json({ success: true, message: 'Product successfully updated', products });
         } else {
             res.json({ success: false, error: 'This method is not allowed' })
         }

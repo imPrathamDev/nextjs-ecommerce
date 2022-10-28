@@ -24,7 +24,7 @@ const ProductSchema = new Schema({
     sku: {
             type: String,
             required: true,
-            unique: true    
+            unique: true
     },
     desc: {
         type: String,
@@ -71,7 +71,13 @@ const ProductSchema = new Schema({
     feature: {
         type: String,
         default: "None",
-    }
+    },
+    collections: {
+        type: Object,
+        required: true,
+        ref: 'Product'
+    },
+    tags: []
 }, {
     timestamps: true
 });

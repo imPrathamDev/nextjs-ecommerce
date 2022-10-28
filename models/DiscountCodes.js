@@ -4,26 +4,31 @@ const DiscountCodesSchema = Schema({
     code: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        uppercase: true
     },
     isPercent: {
         type: Boolean,
         required: true,
         default: true
     },
-    amount: {
+    value: {
         type: Number,
         required: true
     },
     expireDate: {
-        type: String,
+        type: Date,
         required: true,
-        default: 'NA'
+        default: null
     },
     isActive: {
         type: Boolean,
         required: true,
         default: true
+    },
+    limit: {
+        type: Number,
+        required: true
     }
 }, {
     timestamps: true
