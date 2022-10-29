@@ -74,9 +74,9 @@ function NavBar() {
             >
               <div className="flex items-center justify-between">
                 <Link href="/">
-                  <span className="flex">
+                  <a className="flex">
                     <Image src={logo} height={30} width={80} className="" />
-                  </span>
+                  </a>
                 </Link>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ function NavBar() {
 
               <div className="px-4 py-6 flex flex-col gap-4">
                 <Link href={"/"}>
-                  <span
+                  <a
                     className={`block w-fit leading-10 border-b-4 border-transparent ${
                       router.asPath === "/"
                         ? "text-primary border-primary"
@@ -105,7 +105,7 @@ function NavBar() {
                     } hover:text-primary hover:border-current transition-all`}
                   >
                     Home
-                  </span>
+                  </a>
                 </Link>
                 <NavMenu router={router} />
               </div>
@@ -119,7 +119,7 @@ function NavBar() {
           <div className="flex items-center justify-end flex-1">
             <nav className="hidden lg:text-gray-500 lg:tracking-wide lg:font-bold lg:text-sm lg:space-x-6 lg:flex">
               <Link href={"/"}>
-                <span
+                <a
                   className={`block h-full leading-[4rem] border-b-4 border-transparent ${
                     router.asPath === "/"
                       ? "text-primary border-primary"
@@ -127,13 +127,13 @@ function NavBar() {
                   } hover:text-primary hover:border-current transition-all`}
                 >
                   Home
-                </span>
+                </a>
               </Link>
 
               <NavMenu router={router} />
 
               <Link href={"/shop"}>
-                <span
+                <a
                   className={`block h-full leading-[4rem] border-b-4 border-transparent ${
                     router.asPath === "/shop"
                       ? "text-primary border-primary"
@@ -141,7 +141,7 @@ function NavBar() {
                   } hover:text-primary hover:border-current transition-all`}
                 >
                   Shop
-                </span>
+                </a>
               </Link>
 
               {/* <Link href={'/collections'}>
@@ -151,7 +151,7 @@ function NavBar() {
               </Link> */}
 
               <Link href={"/about-us"}>
-                <span
+                <a
                   className={`block h-full leading-[4rem] border-b-4 border-transparent ${
                     router.asPath === "/about-us"
                       ? "text-primary border-primary"
@@ -159,11 +159,11 @@ function NavBar() {
                   } hover:text-primary hover:border-current transition-all`}
                 >
                   About Us
-                </span>
+                </a>
               </Link>
 
               <Link href={"/contact"}>
-                <li
+                <a
                   className={`block h-full leading-[4rem] border-b-4 border-transparent ${
                     router.asPath === "/contact"
                       ? "text-primary border-primary"
@@ -171,7 +171,7 @@ function NavBar() {
                   } hover:text-primary hover:border-current transition-all`}
                 >
                   Contact
-                </li>
+                </a>
               </Link>
             </nav>
             <div className="flex items-center ml-8">

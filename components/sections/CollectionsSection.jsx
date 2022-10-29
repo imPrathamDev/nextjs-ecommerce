@@ -17,27 +17,23 @@ function CollectionsSection({ collections }) {
       </div>
       <div className="mt-10 py-4 px-6 space-y-12 flex gap-x-12 lg:space-y-0 overflow-x-scroll custom-scrollbar">
         {data.map((callout) => (
-          <div
-            key={callout.name}
-            className="group relative flex flex-col even:flex-col-reverse"
-          >
-            <div className="relative w-60 h-60 bg-white rounded-lg overflow-hidden transition-all border-2 border-primary group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
-              <Image
-                src={callout.placeholder}
-                layout="fill"
-                width={500}
-                height={500}
-                className="object-center object-cover"
-              />
-            </div>
-            <h3 className="my-6 text-lg text-gray-500 text-left transition-all group-hover:text-primary group-hover:my-2 font-Cinzel">
-              <Link href={`/collections/${callout?.slug}`}>
-                <span className="absolute inset-0" />
+          <Link href={`/collections/${callout?.slug}`} key={callout.name}>
+            <div className="group relative flex flex-col even:flex-col-reverse cursor-pointer">
+              <div className="relative w-60 h-60 bg-white rounded-lg overflow-hidden transition-all border-2 border-primary group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
+                <Image
+                  src={callout.placeholder}
+                  layout="fill"
+                  width={500}
+                  height={500}
+                  className="object-center object-cover"
+                />
+              </div>
+              <h3 className="my-6 text-lg text-gray-500 text-left transition-all group-hover:text-primary group-hover:my-2 font-Cinzel">
                 {callout.name}
-              </Link>
-            </h3>
-            {/* <p className="text-base font-semibold text-gray-900">{callout.description}</p> */}
-          </div>
+              </h3>
+              {/* <p className="text-base font-semibold text-gray-900">{callout.description}</p> */}
+            </div>
+          </Link>
         ))}
       </div>
     </div>

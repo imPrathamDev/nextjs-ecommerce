@@ -47,11 +47,11 @@ function NavMenu({ router }) {
           } hover:text-primary hover:border-current transition-all gap-1 group`}
         >
           <Link href={col?.name === "Collections" ? "/collections" : "/"}>
-            <span
+            <a
               className={`block w-fit leading-10 border-b-4 border-transparent`}
             >
               {col?.name}
-            </span>
+            </a>
           </Link>
           {col?.submenu && (
             <svg
@@ -88,9 +88,9 @@ function NavMenu({ router }) {
                               href={"/collections/${slink.slug}"}
                               as={`/collections/${slink.slug}`}
                             >
-                              <span className="hover:text-primary hover:tracking-wider transition-all">
+                              <a className="hover:text-primary hover:tracking-wider transition-all">
                                 {slink.name}
-                              </span>
+                              </a>
                             </Link>
                           </li>
                         ))}

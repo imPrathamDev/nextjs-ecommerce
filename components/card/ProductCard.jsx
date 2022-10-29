@@ -26,10 +26,13 @@ function ProductCard({ allData }) {
         />
       </div>
       <div className="mt-2">
-        <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline">
-          <Link href={`/shop/${allData?.slug}`}>{allData.title}</Link>
-        </h5>
-
+        <Link href={`/shop/${allData?.slug}`}>
+          <a>
+            <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline">
+              {allData.title}
+            </h5>
+          </a>
+        </Link>
         <div className="text-sm font-medium flex items-center justify-center xl:justify-start lg:justify-start gap-1 text-gray-700">
           <p>
             <small className="text-xs">₹</small>

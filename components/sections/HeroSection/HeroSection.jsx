@@ -12,8 +12,6 @@ function HeroSection({ image, title, secondaryTitle, desc, url, buttonTitle }) {
         alt={image?.alt}
         blurDataURL={image?.url}
         placeholder="blur"
-        width={360}
-        height={200}
         layout="fill"
       />
       <div className="block inset-0 absolute bg-gradient-to-r from-primary-white to-transparent w-full h-full"></div>

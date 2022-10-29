@@ -28,10 +28,10 @@ function FeatureCategory({ products }) {
                 {category.desc}
               </p>
 
-              <Link href={"${category.link}"} as={category?.link}>
-                <span className="inline-block px-6 py-3 mt-6 text-sm text-white bg-black rounded">
+              <Link href={`${category.link}`} as={category?.link}>
+                <a className="inline-block px-6 py-3 mt-6 text-sm text-white bg-black rounded">
                   View the Range
-                </span>
+                </a>
               </Link>
             </div>
           </div>

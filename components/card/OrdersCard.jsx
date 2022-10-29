@@ -36,11 +36,15 @@ function OrdersCard({ order }) {
 
           <div className="hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4">
             <div className="flex items-center justify-center bg-primary py-2 px-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-all">
-              <Link href={`/account/orders/${order._id}`}>View Order</Link>
+              <Link href={`/account/orders/${order._id}`}>
+                <a>View Order</a>
+              </Link>
               <span className="sr-only">{order.orderId}</span>
             </div>
             <div className="flex items-center justify-center bg-primary py-2 px-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-all">
-              <Link href={"/"}>View Invoice</Link>
+              <Link href={"/"}>
+                <a>View Invoice</a>
+              </Link>
               <span className="sr-only">for order {order.orderId}</span>
             </div>
           </div>
@@ -65,9 +69,11 @@ function OrdersCard({ order }) {
                 <div className="flex-1 ml-6 text-sm">
                   <div className="font-medium text-primary-black sm:flex sm:justify-between">
                     <Link href={`/shop/${product._id?.slug}`}>
-                      <h5 className="text-lg font-medium font-Cinzel hover:underline hover:text-primary transition-all">
-                        {product._id?.title}
-                      </h5>
+                      <a>
+                        <h5 className="text-lg font-medium font-Cinzel hover:underline hover:text-primary transition-all">
+                          {product._id?.title}
+                        </h5>
+                      </a>
                     </Link>
                     <p className="mt-2 sm:mt-0">
                       <span className="text-gray-600">Qty: {product.qty}</span>{" "}
