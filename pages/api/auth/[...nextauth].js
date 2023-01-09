@@ -20,7 +20,7 @@ export default NextAuth({
   },
   providers: [
     CredentialsProvider({
-      type: "credentials",
+      // type: "credentials",
       async authorize(credentials, req) {
         const { email, password } = credentials;
         const user = await fetch(

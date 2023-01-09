@@ -55,23 +55,16 @@ function Login() {
             password,
           });
           console.log("Result => ", result);
-          if (result.error) {
-            toast.error(
-              result.error.response &&
-                result.error.response.data &&
-                result.error.response.data.message
-                ? result.error.response.data.message
-                : result.error.message,
-              {
-                position: "bottom-left",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-              }
-            );
+          if (!result.ok) {
+            toast.error("Login Failed", {
+              position: "bottom-left",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
           } else {
             toast.success("Login Successfully", {
               position: "bottom-left",

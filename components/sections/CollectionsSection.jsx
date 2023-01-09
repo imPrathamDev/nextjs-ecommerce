@@ -5,6 +5,26 @@ import Link from "next/link";
 
 function CollectionsSection({ collections }) {
   const data = collections?.collections.filter((c) => c.type === "Categories");
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector("#collectionWrapper");
+    if (!scrollContainer) return;
+
+    scrollContainer.addEventListener("wheel", (evt) => {
+      const vw = Math.max(
+        document.documentElement.clientWidth || 0,
+        window.innerWidth || 0
+      );
+      if (vw > 860) {
+        evt.preventDefault();
+        scrollContainer.scrollLeft += evt.deltaY * 5;
+      }
+    });
+
+    return () => {
+      scrollContainer.removeEventListener("wheel", () => {});
+    };
+  }, []);
   return (
     <div className="py-16 sm:py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,7 +35,10 @@ function CollectionsSection({ collections }) {
           <p>Explore some product types which provide.</p>
         </div>
       </div>
-      <div className="mt-10 py-4 px-6 space-y-12 flex gap-x-12 lg:space-y-0 overflow-x-scroll custom-scrollbar">
+      <div
+        id="collectionWrapper"
+        className="mt-10 py-4 px-6 space-y-12 flex gap-x-12 lg:space-y-0 overflow-x-scroll custom-scrollbar scroll-smooth"
+      >
         {data.map((callout) => (
           <Link href={`/collections/${callout?.slug}`} key={callout.name}>
             <div className="group relative flex flex-col even:flex-col-reverse cursor-pointer">
