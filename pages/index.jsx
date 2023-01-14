@@ -11,6 +11,8 @@ import Testimonials from "../components/sections/Testimonials";
 import HeroSlider from "../components/sections/HeroSection/HeroSlider";
 import Layouts from "../components/layouts/Layouts";
 import Contact from "../components/sections/ContactSection/Contact";
+import Toast from "../components/Toast/Toast";
+import { useState } from "react";
 
 export async function getStaticProps() {
   const products = await fetch(
@@ -67,6 +69,7 @@ export default function Home({ products, collections, newestProducts }) {
         <ProductSlider products={newestProducts} />
         <Testimonials />
         <Contact />
+        <div className="absolute bottom-4 right-4"></div>
       </motion.section>
     </Layouts>
   );
