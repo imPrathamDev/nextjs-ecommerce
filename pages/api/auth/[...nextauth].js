@@ -33,18 +33,19 @@ export default NextAuth({
             },
           }
         ).then((res) => res.json());
-        if (user?.success) {
-          const newUser = {
-            _id: user?._id,
-            name: user?.name,
-            email: user?.email,
-            image: user?.image,
-            type: user?.type,
-          };
-          return newUser;
-        } else {
-          return null;
+
+        if (!user.success) {
+          throw new Error(user.error);
         }
+
+        const newUser = {
+          _id: user?._id,
+          name: user?.name,
+          email: user?.email,
+          image: user?.image,
+          type: user?.type,
+        };
+        return newUser;
       },
     }),
   ],
