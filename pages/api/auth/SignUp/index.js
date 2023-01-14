@@ -20,13 +20,8 @@ export default async function handler(req, res) {
     if (req.method == "POST") {
       if (validateEmail(req.body.email.trim())) {
         const { firstName, lastName, email, password } = req.body;
-
-        console.log("CONNECTING TO DB");
         await connectdb();
-        console.log("CONNECTED TO DB");
-
-        console.log("CREATING NEW USER");
-        const newUser = await User.create({
+        await User.create({
           firstName,
           lastName,
           email: email.trim().toLowerCase(),
@@ -36,8 +31,7 @@ export default async function handler(req, res) {
           ).toString(),
           avatar: `https://avatars.dicebear.com/api/micah/${firstName.trim()}.svg`,
         });
-        console.log("NEW USER CREATED");
-        res.status(200).json({ success: true, newUser });
+        res.status(200).json({ success: true });
       } else {
         res.json({ success: false, error: "Invalid email" });
       }
