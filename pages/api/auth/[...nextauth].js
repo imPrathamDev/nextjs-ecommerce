@@ -24,7 +24,7 @@ export default NextAuth({
       async authorize(credentials, req) {
         const { email, password } = credentials;
         const user = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/users/SignIn`,
+          `${process.env.NEXT_PUBLIC_HOST}/api/auth/SignIn`,
           {
             method: "POST",
             body: JSON.stringify({ email, password }),
