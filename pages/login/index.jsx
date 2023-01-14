@@ -1,13 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import bgImage from "../../public/bg.jpg";
-import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import { signIn, getSession, useSession } from "next-auth/react";
 import Layouts from "../../components/layouts/Layouts";
-import logo from "../../public/logo/logo-transparent-white.png";
-import "react-toastify/dist/ReactToastify.css";
-import Image from "next/image";
+import Toast from "../../components/Toast/Toast";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
@@ -29,6 +26,10 @@ function Login() {
   const { data: session } = useSession();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [showToast, setShowToast] = useState({
+    show: false,
+    msg: "",
+  });
 
   React.useEffect(() => {
     if (session) {
@@ -56,80 +57,32 @@ function Login() {
           });
           console.log("Result => ", result);
           if (!result.ok) {
-            toast.error("Login Failed", {
-              position: "bottom-left",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
+            setShowToast({ show: true, msg: result.error });
           } else {
-            toast.success("Login Successfully", {
-              position: "bottom-left",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
+            setShowToast({ show: true, msg: "Login Successfully!" });
           }
         } catch (error) {
-          toast.error(
-            error.response && error.response.data && error.response.data.message
-              ? error.response.data.message
-              : error.message,
-            {
-              position: "bottom-left",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            }
-          );
+          setShowToast({
+            show: true,
+            msg:
+              error.response &&
+              error.response.data &&
+              error.response.data.message
+                ? error.response.data.message
+                : error.message,
+          });
         }
       } else {
-        toast.error("Password can't empty!", {
-          position: "bottom-left",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        setShowToast({ show: true, msg: "Password can't empty!" });
       }
     } else {
-      toast.error("Email can't empty!", {
-        position: "bottom-left",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setShowToast({ show: true, msg: "Email can't empty!" });
     }
   };
   return (
     <Layouts>
       <div className="">
-        <ToastContainer
-          position="bottom-left"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-
+        <Toast setShowToast={setShowToast} showToast={showToast} />
         <div className="flex justify-center h-screen">
           <div className="hidden bg-cover lg:block lg:w-2/3 relative">
             <video
