@@ -41,8 +41,7 @@ const CollectionPage = ({ collections }) => {
                 </div>
                 <h3 className="mt-2 text-sm text-gray-500">
                   <Link href={`/collections/${callout?.slug}`}>
-                    <span className="absolute inset-0" />
-                    {callout.name}
+                    <a>{callout.name}</a>
                   </Link>
                 </h3>
                 {/* <p className="text-base font-semibold text-gray-900">{callout.description}</p> */}
