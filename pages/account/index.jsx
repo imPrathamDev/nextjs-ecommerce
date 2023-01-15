@@ -58,7 +58,7 @@ function MyAccount({ user, orders }) {
           </div>
 
           <div className="flex justify-center mx-auto py-4 max-w-5xl">
-            <div className="h-screen sticky top-4 mx-4 basis-1/4">
+            <div className="h-screen sticky top-20 mx-4 basis-1/4">
               <h2 className="font-Cinzel font-medium text-lg text-primary-black">
                 Account Details
               </h2>
@@ -74,15 +74,19 @@ function MyAccount({ user, orders }) {
                   </div>
                 </div>
                 <Link href="/account/address">
-                  <div className="text-center w-full py-2 bg-primary-black text-primary-white my-2 transition-all hover:bg-primary">
-                    View Address
-                  </div>
+                  <a>
+                    <div className="text-center w-full py-2 bg-primary-black text-primary-white my-2 transition-all hover:bg-primary">
+                      View Address
+                    </div>
+                  </a>
                 </Link>
 
                 <Link href="/account/wishlist">
-                  <div className="text-center w-full py-2 bg-primary-black text-primary-white transition-all hover:bg-primary">
-                    View Wishlist
-                  </div>
+                  <a>
+                    <div className="text-center w-full py-2 bg-primary-black text-primary-white transition-all hover:bg-primary">
+                      View Wishlist
+                    </div>
+                  </a>
                 </Link>
               </div>
             </div>
