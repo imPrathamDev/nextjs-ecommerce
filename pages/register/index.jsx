@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
-import "react-toastify/dist/ReactToastify.css";
 import Layouts from "../../components/layouts/Layouts";
+import Toast from "../../components/Toast/Toast";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
@@ -28,6 +27,10 @@ function Register() {
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [showToast, setShowToast] = useState({
+    show: true,
+    msg: "",
+  });
 
   const handlerChange = (e) => {
     if (e.target.name == "firstName") {
@@ -65,29 +68,17 @@ function Register() {
     );
 
     let response = await res.json();
-    console.log(response);
     if (response.success) {
-      toast.success("Account created successfyly.", {
-        position: "bottom-left",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      setShowToast({
+        show: true,
+        msg: "Account created!",
       });
     } else {
-      toast.error("Oops! Error", {
-        position: "bottom-left",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      setShowToast({
+        show: true,
+        msg: "Oops! Error",
       });
     }
-
     setFirstName("");
     setLastName("");
     setEmail("");
@@ -96,17 +87,7 @@ function Register() {
   return (
     <Layouts>
       <div className="">
-        <ToastContainer
-          position="bottom-left"
-          autoClose={1000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        <Toast showToast={showToast} setShowToast={setShowToast} />
         <div className="flex justify-center h-screen">
           <div className="hidden bg-cover lg:block lg:w-2/3 relative">
             <video
