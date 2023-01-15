@@ -1,9 +1,8 @@
-import Head from "next/head";
 import CollectionsSection from "../components/sections/CollectionsSection";
-import Features from "../components/sections/Features";
+// import Features from "../components/sections/Features";
 import Secondary from "../components/sections/Secondary";
 import TrendingSection from "../components/sections/TrendingSection";
-import FeatureCategories from "../components/sections/FeatureCategories";
+// import FeatureCategories from "../components/sections/FeatureCategories";
 import { motion } from "framer-motion";
 import FeatureCategory from "../components/sections/FeatureCategory";
 import ProductSlider from "../components/sections/ProductSlider";
@@ -11,8 +10,7 @@ import Testimonials from "../components/sections/Testimonials";
 import HeroSlider from "../components/sections/HeroSection/HeroSlider";
 import Layouts from "../components/layouts/Layouts";
 import Contact from "../components/sections/ContactSection/Contact";
-import Toast from "../components/Toast/Toast";
-import { useState } from "react";
+import PageTitle from "../components/PageTitle";
 
 export async function getStaticProps() {
   const products = await fetch(
@@ -52,15 +50,7 @@ export default function Home({ products, collections, newestProducts }) {
   return (
     <Layouts>
       <motion.section exit={{ opacity: 0 }} initial="initial" animate="animate">
-        <Head>
-          <title>Brand Name</title>
-          <meta charset="UTF-8" />
-          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
-        </Head>
+        <PageTitle />
         <HeroSlider />
         <CollectionsSection collections={collections} />
         <TrendingSection products={products} />
