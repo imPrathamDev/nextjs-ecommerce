@@ -14,7 +14,7 @@ function ProductCard({ allData }) {
   }, [cartItems]);
 
   return (
-    <div className="w-fit px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
+    <div className="w-[300px] px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
       <div className="">
         <Image
           src={allData?.images?.[0]?.url}
@@ -28,7 +28,7 @@ function ProductCard({ allData }) {
       <div className="mt-2">
         <Link href={`/shop/${allData?.slug}`}>
           <a>
-            <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline">
+            <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline w-fit">
               {allData.title}
             </h5>
           </a>
