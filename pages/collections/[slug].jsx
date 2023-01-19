@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import RangeSlider from "../../components/sections/RangeSlider";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
 
 const colTypesName = ["Categories", "Colours", "Style", "Stones"];
 const newColTypesName = ["category", "color", "style", "stone"];
@@ -214,6 +215,7 @@ export default function SingleCollection({
 
   return (
     <Layouts>
+      <PageTitle title={`${collection.name} Collection`} />
       <div className="bg-primary-white">
         <div>
           {/* Mobile filter dialog */}
@@ -591,7 +593,7 @@ export default function SingleCollection({
                             variants={item}
                             initial={{ opacity: 0, y: 60 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0 }}
+                            exit={{ y: 60 }}
                             key={key}
                             className="max-w-xs"
                           >
