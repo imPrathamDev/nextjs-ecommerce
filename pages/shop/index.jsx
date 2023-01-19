@@ -14,6 +14,7 @@ import {
   ViewGridIcon,
 } from "@heroicons/react/solid";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
 
 const colTypesName = ["Categories", "Colours", "Style", "Stones"];
 const newColTypesName = ["category", "color", "style", "stone"];
@@ -188,6 +189,7 @@ function Shop({ products, collections }) {
   }, [allFilter, values, rating, currSort]);
   return (
     <Layouts>
+      <PageTitle title={"Shop"} />
       <div className="bg-primary-white">
         <div>
           {/* Mobile filter dialog */}
