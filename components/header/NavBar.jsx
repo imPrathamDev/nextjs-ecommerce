@@ -43,7 +43,7 @@ function NavBar() {
         </p>
       </div>
 
-      <header className="border-b border-gray-200 sticky top-0 z-10 bg-primary-white/50 backdrop-blur-lg">
+      <header className="border-b border-gray-200 sticky top-0 z-20 bg-primary-white/50 backdrop-blur-lg">
         <div className="flex items-center justify-between h-16 mx-auto max-w-screen-2xl sm:px-6 lg:px-8">
           <div className="flex items-center">
             <button
