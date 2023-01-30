@@ -85,39 +85,40 @@ function OrdersCard({ order }) {
                   </p>
                 </div>
               </div>
+            </li>
+          ))}
+          <div className="px-2 py-3 sm:flex sm:justify-between items-center">
+            <div className="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                />
+              </svg>
+              <p className="ml-2 text-sm font-medium text-gray-500">
+                {order.status === "Pending"
+                  ? "Order is pending"
+                  : order.status === "Shipped"
+                  ? "Order is on the way"
+                  : order.status === "Complete"
+                  ? "Order is delivered"
+                  : order.status === "Cancelled"
+                  ? "Order was Cancelled"
+                  : order.status === "Return"
+                  ? "Order Return"
+                  : "No Info"}
+              </p>
+            </div>
 
-              <div className="mt-6 sm:flex sm:justify-between items-center">
-                <div className="flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                    />
-                  </svg>
-                  <p className="ml-2 text-sm font-medium text-gray-500">
-                    {order.status === "Pending"
-                      ? "Order is pending"
-                      : order.status === "Shipped"
-                      ? "Order is on the way"
-                      : order.status === "Complete"
-                      ? "Order is delivered"
-                      : order.status === "cancelled"
-                      ? "Order was Cancelled"
-                      : order.status === "Return"
-                      ? "Order Return"
-                      : "No Info"}
-                  </p>
-                </div>
-
-                {/* <div className="mt-6 border-t border-gray-200 pt-4 flex items-center space-x-4 divide-x divide-gray-200 text-sm font-medium sm:mt-0 sm:ml-4 sm:border-none sm:pt-0">
+            {/* <div className="mt-6 border-t border-gray-200 pt-4 flex items-center space-x-4 divide-x divide-gray-200 text-sm font-medium sm:mt-0 sm:ml-4 sm:border-none sm:pt-0">
                             <div className="flex-1 flex justify-center">
                               <a
                                 href={`/shop/${product._id?.slug}`}
@@ -132,9 +133,7 @@ function OrdersCard({ order }) {
                               </a>
                             </div>
                           </div> */}
-              </div>
-            </li>
-          ))}
+          </div>
         </ul>
       </div>
     </>
