@@ -3,13 +3,7 @@ import mongoose from "mongoose";
 mongoose.set("strictQuery", false);
 
 const connectdb = async () =>
-  mongoose.connect(
-    process.env.MONGOOSE_URI,
-    { useNewUrlParser: true },
-    (err) => {
-      if (!err) console.log("MongoDB has connected successfully.");
-    }
-  );
+  mongoose.connect(process.env.MONGOOSE_URI, { useNewUrlParser: true });
 
 require("../models/Products");
 require("../models/DiscountCodes");
