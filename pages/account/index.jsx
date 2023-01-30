@@ -6,17 +6,10 @@ import Order from "../../models/Orders";
 import { signOut, getSession } from "next-auth/react";
 import OrdersCard from "../../components/card/OrdersCard";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
   const { user } = session;
   await connectdb();
   let orders;
@@ -44,6 +37,7 @@ function MyAccount({ user, orders }) {
   return (
     <Layouts>
       <section className="px-4 py-12">
+        <PageTitle title={"My Account"} />
         <div className="mx-auto">
           <div className="text-center">
             <h1 className="text-2xl font-Cinzel font-semibold text-primary">
