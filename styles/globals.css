@@ -13,12 +13,6 @@
 }
 
 @layer components {
-  .box-shadow {
-    -webkit-box-shadow: 10px 10px 40px 0px rgba(176, 155, 113, 1);
-    -moz-box-shadow: 10px 10px 40px 0px rgba(176, 155, 113, 1);
-    box-shadow: 10px 10px 40px 0px rgba(176, 155, 113, 1);
-  }
-
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
     height: 4px;
