@@ -11,7 +11,7 @@ import ProductCard from "../card/ProductCard";
 function ProductSlider({ products }) {
   return (
     <>
-      <section className="mx-8 px-8 py-6 my-16 bg-white rounded-md shadow-b-sm">
+      <section className="mx-8 px-8 py-6 my-16 bg-white rounded-md shadow-b-sm latestProducts">
         <div className="text-center">
           <h2 className="text-5xl font-BrownSugar font-normal text-primary">
             Latest Products
