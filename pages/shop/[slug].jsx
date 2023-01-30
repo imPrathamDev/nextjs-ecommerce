@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Zoom from "react-medium-image-zoom";
 import { CartState } from "../../context/Context";
@@ -12,6 +12,7 @@ import BoughtTogether from "../../components/sections/BoughtTogether";
 import StarCard from "../../components/card/StarCard";
 import ProductCard from "../../components/card/ProductCard";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
 
 export async function getServerSideProps(context) {
   const {
@@ -33,32 +34,11 @@ export async function getServerSideProps(context) {
   );
 
   const product = await productRes.json();
+
   if (product.success === false) {
     return {
       notFound: true,
     };
-  }
-
-  let Wish = {};
-  if (session) {
-    const { user } = session;
-    const wishRes = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/wishlist/checkWishlist`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          userId: user?._id,
-          productId: product?.product?.[0]?._id,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const wishData = await wishRes.json();
-    if (wishData.sucess) {
-      Wish = wishData;
-    }
   }
 
   const reviews = await fetch(
@@ -75,15 +55,15 @@ export async function getServerSideProps(context) {
   ).then((res) => res.json());
 
   let relatedProducts = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts?category=${product.product?.category}`
+    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts?category=${product.product?.category}&limit=4`
   ).then((res) => res.json());
+  console.log("Image", relatedProducts);
   relatedProducts = relatedProducts?.products.filter(
     (p) => p._id !== product?.product?._id
   );
   return {
     props: {
       product: product.product,
-      Wish,
       reviews: reviews?.reviews,
       relatedProducts,
     },
@@ -98,15 +78,14 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
   } = CartState();
   const { data: session } = useSession();
   const [cart, setCart] = React.useState([]);
-  const [isWL, setIsWL] = React.useState(Wish.sucess);
   const [currImage, setCurrImage] = React.useState(product?.images?.[0]);
+  const [isWishListed, setIsWishListed] = useState(false);
 
   async function addToWishlist() {
     if (session) {
-      const wlRes = await fetch("/api/wishlist/addWishlist", {
+      const wlRes = await fetch("/api/wishlist", {
         method: "POST",
         body: JSON.stringify({
-          userId: session?.user?._id,
           productId: product?._id,
         }),
         headers: {
@@ -115,21 +94,18 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
       });
       const wlData = await wlRes.json();
       if (wlData.success) {
-        setIsWL(true);
+        setIsWishListed(true);
       } else {
-        setIsWL(false);
+        setIsWishListed(false);
       }
-    } else {
-      //err
     }
   }
 
   async function removeFromWishlist() {
     if (session) {
-      const wlRes = await fetch("/api/wishlist/removeWishlist", {
+      const wlRes = await fetch("/api/wishlist", {
         method: "DELETE",
         body: JSON.stringify({
-          userId: session?.user?._id,
           productId: product?._id,
         }),
         headers: {
@@ -138,17 +114,16 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
       });
       const wlData = await wlRes.json();
       if (wlData.success) {
-        setIsWL(false);
+        setIsWishListed(false);
       } else {
-        setIsWL(true);
+        setIsWishListed(true);
       }
-    } else {
     }
   }
 
   const wishlistHandler = () => {
     if (session) {
-      if (isWL) {
+      if (isWishListed) {
         removeFromWishlist();
       } else {
         addToWishlist();
@@ -158,16 +133,45 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
     }
   };
 
-  React.useEffect(() => {
+  async function checkItemInWishList() {
+    let data = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/wishlist/checkWishlist`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          productId: product._id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    data = await data.json();
+    console.log("Data", data);
+    setIsWishListed(data.success);
+  }
+
+  useEffect(() => {
     setCart(cartItems);
   }, [cartItems]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrImage(product?.images?.[0]);
   }, [product]);
 
+  useEffect(() => {
+    checkItemInWishList();
+  }, []);
+
   return (
     <Layouts>
+      <PageTitle
+        title={product.title}
+        description={product.shortDesc}
+        keywords={product.tags.join(",")}
+        image={`https://og-image-nextjs.vercel.app/api/generate-og-image-playwrite?title=${product.title}&desc=${product.shortDes}&price=${product.price}&discPrice=${product.discPrice}&imageURL=${product.images[0].url}`}
+      />
       <motion.div exit={{ opacity: 0 }}>
         <section className="text-gray-600 overflow-hidden">
           <div className="container px-5 py-12 mx-auto">
@@ -178,7 +182,7 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
                     <Image
                       width={400}
                       height={400}
-                      className="object-cover object-center"
+                      className="object-cover object-center rounded-md"
                       src={currImage?.url}
                       alt={currImage?.alt}
                       blurDataURL={currImage?.url}
@@ -282,10 +286,7 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
                             })
                           }
                         >
-                          <div
-                            className="relative inline-block group focus:outline-none focus:ring cursor-pointer"
-                            href="/download"
-                          >
+                          <div className="relative inline-block group focus:outline-none focus:ring cursor-pointer">
                             <span className="absolute inset-0 transition-transform translate-x-1.5 translate-y-1.5 bg-primary-semi-light group-hover:translate-y-0 group-hover:translate-x-0"></span>
                             <span className="relative inline-block px-8 py-3 text-sm font-bold tracking-widest text-black uppercase border-2 border-current group-active:text-opacity-75">
                               Add to Cart
@@ -304,7 +305,7 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
                   <button
                     onClick={wishlistHandler}
                     className={`rounded-full w-10 h-10 p-0 border-0 inline-flex items-center justify-center ${
-                      isWL
+                      isWishListed
                         ? "bg-red-200 hover:bg-gray-200"
                         : "text-gray-500 bg-gray-200 hover:bg-red-200"
                     } ml-4 transition-all transform hover:scale-105 group`}
@@ -315,7 +316,7 @@ function ProductPage({ product, Wish, reviews, relatedProducts }) {
                       strokeLinejoin="round"
                       strokeWidth="2"
                       className={`w-5 h-5 ${
-                        isWL
+                        isWishListed
                           ? "text-red-500 group-hover:text-gray-500"
                           : "text-gray-500 group-hover:text-red-500"
                       }`}
