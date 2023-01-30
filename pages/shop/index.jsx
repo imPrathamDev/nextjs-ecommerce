@@ -558,7 +558,7 @@ function Shop({ products, collections }) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="grid grid-cols-1 xl:grid-cols-3 gap-2 justify-center items-center"
+                      className="grid grid-cols-2 xl:grid-cols-3 gap-2 justify-center items-center"
                     >
                       <AnimatePresence>
                         {allProducts.map((product, key) => (

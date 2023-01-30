@@ -14,7 +14,7 @@ function ProductCard({ allData }) {
   }, [cartItems]);
 
   return (
-    <div className="w-[300px] px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
+    <div className="lg:w-[300px] px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
       <div className="">
         <Image
           src={allData?.images?.[0]?.url}

@@ -6,16 +6,11 @@ import { CartState } from "../../context/Context";
 import { useRouter } from "next/router";
 import SearchModel from "../models/SearchModel";
 import Image from "next/image";
-// import { ReactComponent as Logo } from "../../public/logo/logo-transparent.svg";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
-// import { navigation } from "../../static/navigation";
-import dynamic from "next/dynamic";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-const DrawSVG = dynamic(() => import("react-svg-drawing"), { ssr: false });
 
 function NavBar() {
   const router = useRouter();
@@ -74,8 +69,9 @@ function NavBar() {
           },
         ],
         pages: [
-          { name: "About Us", href: "#" },
-          { name: "Contact", href: "#" },
+          { name: "Shop", href: "/shop" },
+          { name: "About Us", href: "/about-us" },
+          { name: "Contact", href: "/contact" },
         ],
       });
     }

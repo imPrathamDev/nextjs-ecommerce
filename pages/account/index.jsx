@@ -51,8 +51,8 @@ function MyAccount({ user, orders }) {
             </button>
           </div>
 
-          <div className="flex justify-center mx-auto py-4 max-w-5xl">
-            <div className="h-screen sticky top-20 mx-4 basis-1/4">
+          <div className="flex flex-col gap-y-6 lg:flex-row lg:justify-center mx-auto py-4 max-w-5xl">
+            <div className="lg:h-screen lg:sticky lg:top-20 mx-4 basis-1/4">
               <h2 className="font-Cinzel font-medium text-lg text-primary-black">
                 Account Details
               </h2>
@@ -85,7 +85,7 @@ function MyAccount({ user, orders }) {
               </div>
             </div>
 
-            <div className="basis-3/4 w-full">
+            <div className="lg:basis-3/4 w-full">
               <h2 className="font-Cinzel font-medium text-lg text-primary-black text-end">
                 Order History
               </h2>

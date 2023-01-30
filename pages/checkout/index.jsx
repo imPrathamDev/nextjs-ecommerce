@@ -362,10 +362,10 @@ function Checkout({ user }) {
       />
       <section className="overflow-hidden">
         <Toast showToast={toast} setShowToast={setToast} />
-        <div className="container px-14 pb-12 pt-8 mx-auto">
+        <div className="container lg:px-14 pb-12 pt-8 mx-auto">
           <div className="flex flex-col xl:flex-row lg:flex-row">
             <div className="flex-1">
-              <h3 className="text-3xl font-semibold font-Cinzel mb-4">
+              <h3 className="text-3xl font-semibold font-Cinzel mb-4 ml-2 lg:ml-0">
                 Checkout
               </h3>
               <div className="px-4 py-2">

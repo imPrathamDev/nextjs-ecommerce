@@ -15,17 +15,15 @@ function HeroSection({ image, title, secondaryTitle, desc, url, buttonTitle }) {
           placeholder="blur"
           layout="fill"
         />
-        <div className="block inset-0 absolute bg-gradient-to-r from-primary-white to-transparent w-full h-full"></div>
-        <div className="relative max-w-screen-xl px-4 py-24 lg:h-3/4 lg:items-center lg:flex mx-6">
-          <div className="max-w-xl text-center sm:text-left ml-10 hero">
-            <h1 className="text-3xl font-extrabold sm:text-5xl">
-              {title}
-              {secondaryTitle && (
-                <strong className="font-BrownSugar font-normal text-primary sm:block my-1">
-                  {secondaryTitle}
-                </strong>
-              )}
-            </h1>
+        <div className="block inset-0 absolute bg-gradient-to-r from-primary-white to-primary-white/30 w-full h-full"></div>
+        <div className="relative max-w-screen-xl px-4 py-24 lg:h-1/2 mx-auto">
+          <div className="lg:max-w-xl text-center sm:text-left lg:ml-10 hero">
+            <h1 className="text-3xl font-extrabold sm:text-5xl">{title}</h1>
+            {secondaryTitle && (
+              <strong className="font-BrownSugar font-normal text-primary sm:block my-1 text-5xl">
+                {secondaryTitle}
+              </strong>
+            )}
 
             <p className="max-w-xl mt-4 sm:leading-relaxed sm:text-lg para">
               {desc}
