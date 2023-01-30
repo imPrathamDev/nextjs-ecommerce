@@ -56,8 +56,8 @@ function Testimonials() {
           <p>Explore some product types which provide.</p>
         </div>
         <div className="sm:gap-6 lg:gap-8 sm:columns-2 lg:columns-3 [column-fill:_balance]">
-          {allTestimonials.map((testimonial) => (
-            <div className="mb-8 sm:break-inside-avoid">
+          {allTestimonials.map((testimonial, index) => (
+            <div key={index} className="mb-8 sm:break-inside-avoid">
               <blockquote className="p-6 shadow bg-white rounded-xl">
                 <p className="leading-relaxed text-gray-700">
                   {testimonial?.message}

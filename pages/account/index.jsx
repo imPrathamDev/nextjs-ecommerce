@@ -91,7 +91,7 @@ function MyAccount({ user, orders }) {
               </h2>
               {!orders.length > 0 && (
                 <p className="text-end text-sm text-gray-600">
-                  You haven't placed any orders yet.
+                  You haven&apos;t placed any orders yet.
                 </p>
               )}
               {orders.length > 0 && (

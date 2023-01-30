@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { Fragment } from "react";
 import ProductCard from "../card/ProductCard";
 
 function FeatureCategory({ products }) {
@@ -37,8 +37,10 @@ function FeatureCategory({ products }) {
           </div>
 
           <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-3 lg:py-12">
-            {categoryProducts.map((product) => (
-              <ProductCard allData={product} />
+            {categoryProducts.map((product, index) => (
+              <Fragment key={index}>
+                <ProductCard allData={product} />
+              </Fragment>
             ))}
           </div>
         </div>

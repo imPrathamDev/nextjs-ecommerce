@@ -42,8 +42,8 @@ function ProductSlider({ products }) {
                 "--swiper-navigation-size": "2rem",
               }}
             >
-              {products.products.map((product) => (
-                <SwiperSlide>
+              {products.products.map((product, index) => (
+                <SwiperSlide key={index}>
                   <ProductCard allData={product} />
                 </SwiperSlide>
               ))}

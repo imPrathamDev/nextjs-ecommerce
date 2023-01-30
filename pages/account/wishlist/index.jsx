@@ -51,8 +51,8 @@ export default function Wishlist() {
                           <div className="absolute w-full">
                             <div className="text-center">
                               <h1 className="my-2 text-primary-black font-bold text-2xl">
-                                Looks like you've found the doorway to the great
-                                nothing
+                                Looks like you&apos;ve found the doorway to the
+                                great nothing
                               </h1>
                               <p className="my-2 text-primary-black">
                                 Sorry about that! Please visit our homepage to

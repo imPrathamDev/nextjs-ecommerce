@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 function Footer() {
@@ -7,13 +8,15 @@ function Footer() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
             <div className="flex justify-center text-primary-semi-light sm:justify-start">
-              <a href="" className="flex">
-                <img
-                  src="/logo/logo-transparent-black.png"
-                  alt=""
-                  className="h-16 -ml-6"
-                />
-              </a>
+              <Link href={"/"}>
+                <a>
+                  <img
+                    src="/logo/logo-transparent.svg"
+                    alt=""
+                    className="h-16 -ml-6"
+                  />
+                </a>
+              </Link>
             </div>
 
             <p className="max-w-md mx-auto mt-6 leading-relaxed text-center text-gray-500 sm:max-w-xs sm:mx-0 sm:text-left">
@@ -24,8 +27,7 @@ function Footer() {
             <ul className="flex justify-center gap-6 mt-8 md:gap-8 sm:justify-start">
               <li>
                 <a
-                  href="/"
-                  rel="noopener noreferrer"
+                  href="https://impratham.vercel.app/"
                   target="_blank"
                   className="text-primary transition hover:text-primary-dark duration-200"
                 >
@@ -47,7 +49,7 @@ function Footer() {
 
               <li>
                 <a
-                  href="/"
+                  href="https://impratham.vercel.app/"
                   rel="noopener noreferrer"
                   target="_blank"
                   className="text-primary transition hover:text-primary/75"
@@ -89,7 +91,7 @@ function Footer() {
 
               <li>
                 <a
-                  href="/"
+                  href="https://impratham.vercel.app/"
                   rel="noopener noreferrer"
                   target="_blank"
                   className="text-primary transition hover:text-primary/75"
@@ -112,7 +114,7 @@ function Footer() {
 
               <li>
                 <a
-                  href="/"
+                  href="https://impratham.vercel.app/"
                   rel="noopener noreferrer"
                   target="_blank"
                   className="text-primary transition hover:text-primary/75"
@@ -146,7 +148,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Company History
                     </a>
@@ -155,7 +157,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Meet the Team
                     </a>
@@ -164,7 +166,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Employee Handbook
                     </a>
@@ -173,7 +175,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Careers
                     </a>
@@ -192,7 +194,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Web Development
                     </a>
@@ -201,7 +203,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Web Design
                     </a>
@@ -210,7 +212,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Marketing
                     </a>
@@ -219,7 +221,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Google Ads
                     </a>
@@ -238,7 +240,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       FAQs
                     </a>
@@ -247,7 +249,7 @@ function Footer() {
                   <li>
                     <a
                       className="text-gray-700 transition hover:text-gray-700/75"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       Support
                     </a>
@@ -256,7 +258,7 @@ function Footer() {
                   <li>
                     <a
                       className="flex group justify-center gap-1.5 sm:justify-start"
-                      href="/"
+                      href="https://impratham.vercel.app/"
                     >
                       <span className="text-gray-700 transition group-hover:text-gray-700/75">
                         Live Chat
@@ -281,7 +283,7 @@ function Footer() {
                 <li>
                   <a
                     className="flex items-center justify-center gap-1.5 sm:justify-start"
-                    href="/"
+                    href="https://impratham.vercel.app/"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -305,7 +307,7 @@ function Footer() {
                 <li>
                   <a
                     className="flex items-center justify-center gap-1.5 sm:justify-start"
-                    href="/"
+                    href="https://impratham.vercel.app/"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -357,13 +359,13 @@ function Footer() {
         </div>
 
         <div className="pt-6 mt-12 border-t border-gray-100">
-          <div className="text-center sm:flex sm:justify-between sm:text-left">
+          <div className="text-center sm:flex sm:justify-between sm:gap-x-1 sm:text-left">
             <p className="text-sm text-gray-500">
               <span className="block sm:inline">All rights reserved.</span>
 
               <a
                 className="inline-block text-primary underline transition hover:text-primary/75"
-                href="/"
+                href="https://impratham.vercel.app/"
               >
                 Terms & Conditions
               </a>
@@ -372,7 +374,7 @@ function Footer() {
 
               <a
                 className="inline-block text-primary underline transition hover:text-primary/75"
-                href="/"
+                href="https://impratham.vercel.app/"
               >
                 Privacy Policy
               </a>

@@ -492,9 +492,10 @@ function Checkout({ user }) {
                         initial={{ opacity: 0.2 }}
                         exit={{ opacity: 0.2 }}
                         animate={{ opacity: 1 }}
-                        class="mt-2 text-xs text-green-500"
+                        className="mt-2 text-xs text-green-500"
                       >
-                        <span class="font-medium">Wow!</span> coupon applied of{" "}
+                        <span className="font-medium">Wow!</span> coupon applied
+                        of{" "}
                         {coupon?.isPercent
                           ? `${coupon?.value}%`
                           : `₹${coupon?.value}`}{" "}
