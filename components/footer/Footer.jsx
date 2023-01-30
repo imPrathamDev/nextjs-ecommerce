@@ -29,6 +29,7 @@ function Footer() {
                 <a
                   href="https://impratham.vercel.app/"
                   target="_blank"
+                  rel="noreferrer"
                   className="text-primary transition hover:text-primary-dark duration-200"
                 >
                   <span className="sr-only">Facebook</span>
@@ -50,8 +51,8 @@ function Footer() {
               <li>
                 <a
                   href="https://impratham.vercel.app/"
-                  rel="noopener noreferrer"
                   target="_blank"
+                  rel="noreferrer"
                   className="text-primary transition hover:text-primary/75"
                 >
                   <span className="sr-only">Instagram</span>
@@ -72,9 +73,9 @@ function Footer() {
 
               <li>
                 <a
-                  href="/"
-                  rel="noopener noreferrer"
+                  href="https://impratham.vercel.app/"
                   target="_blank"
+                  rel="noreferrer"
                   className="text-primary transition hover:text-primary/75"
                 >
                   <span className="sr-only">Twitter</span>
@@ -92,7 +93,7 @@ function Footer() {
               <li>
                 <a
                   href="https://impratham.vercel.app/"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   target="_blank"
                   className="text-primary transition hover:text-primary/75"
                 >
@@ -115,7 +116,7 @@ function Footer() {
               <li>
                 <a
                   href="https://impratham.vercel.app/"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   target="_blank"
                   className="text-primary transition hover:text-primary/75"
                 >

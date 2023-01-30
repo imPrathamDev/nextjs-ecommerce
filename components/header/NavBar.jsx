@@ -285,9 +285,11 @@ function NavBar() {
               </Dialog>
             </Transition.Root>
 
-            <a href="/" className="flex">
-              <img src={"/logo/logo-transparent.svg"} className="h-16" />
-            </a>
+            <Link href="/">
+              <a>
+                <img src={"/logo/logo-transparent.svg"} className="h-16" />
+              </a>
+            </Link>
           </div>
 
           <div className="flex items-center justify-end flex-1">

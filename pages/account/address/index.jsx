@@ -212,8 +212,9 @@ function Address() {
                     </motion.div>
                   </>
                 ) : address.length > 0 ? (
-                  address.map((addres) => (
+                  address.map((addres, index) => (
                     <motion.div
+                      key={index}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0.2 }}
