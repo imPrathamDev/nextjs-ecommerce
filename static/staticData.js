@@ -51,3 +51,5 @@ export const heroBanners = [
     buttonTitle: "Shop Now",
   },
 ];
+
+export const DEFAULT_LIMIT = 8;
