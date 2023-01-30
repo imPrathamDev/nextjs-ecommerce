@@ -1,0 +1,18 @@
+.icon {
+  animation: shake 1s linear alternate infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(20deg);
+  }
+  33% {
+    transform: rotate(-20deg);
+  }
+  66% {
+    transform: rotate(20deg);
+  }
+  100% {
+    transform: rotate(-20deg);
+  }
+}
