@@ -8,10 +8,10 @@ import PageTitle from "../../components/PageTitle";
 import { getCollections } from "../../dbOperations/collectionOperations";
 
 export async function getStaticProps() {
-  const getCollections = await getCollections();
+  const collections = await getCollections();
   return {
     props: {
-      collections: JSON.parse(JSON.stringify(getCollections?.collections)),
+      collections: JSON.parse(JSON.stringify(collections?.collections)),
     },
   };
 }

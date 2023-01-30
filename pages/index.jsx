@@ -16,7 +16,6 @@ export async function getStaticProps() {
   const products = await getProducts();
   const collections = await getCollections();
   const newestProducts = await getProducts({ sort: "new" });
-  console.log({ products, collections, newestProducts });
   return {
     props: {
       products: JSON.parse(JSON.stringify(products)),
