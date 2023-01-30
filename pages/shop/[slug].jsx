@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Zoom from "react-medium-image-zoom";
 import { CartState } from "../../context/Context";
-import { useSession, getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import "react-medium-image-zoom/dist/styles.css";
 import Reviews from "../../components/sections/Reviews";
@@ -13,64 +13,42 @@ import StarCard from "../../components/card/StarCard";
 import ProductCard from "../../components/card/ProductCard";
 import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
+import { getProduct, getProducts } from "../../dbOperations/productOperations";
+import { getReviews } from "../../dbOperations/reviewOperations";
 
 export async function getServerSideProps(context) {
   const {
     params: { slug },
   } = context;
-  const session = await getSession(context);
 
-  const productRes = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts/slug`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        slug: slug,
-      }),
-      header: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    }
-  );
-
-  const product = await productRes.json();
-
+  const product = await getProduct(slug);
   if (product.success === false) {
     return {
       notFound: true,
     };
   }
 
-  const reviews = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/reviews/getReviews`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        product: product.product?._id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((res) => res.json());
+  const reviews = await getReviews(product.product?._id);
 
-  let relatedProducts = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts?category=${product.product?.category}&limit=4`
-  ).then((res) => res.json());
-  console.log("Image", relatedProducts);
+  let relatedProducts = await getProducts({
+    category: product.product?.category,
+    limit: 4,
+  });
+
   relatedProducts = relatedProducts?.products.filter(
     (p) => p._id !== product?.product?._id
   );
+
   return {
     props: {
-      product: product.product,
-      reviews: reviews?.reviews,
-      relatedProducts,
+      product: JSON.parse(JSON.stringify(product.product)),
+      reviews: JSON.parse(JSON.stringify(reviews?.reviews)),
+      relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
     },
   };
 }
 
-function ProductPage({ product, Wish, reviews, relatedProducts }) {
+function ProductPage({ product, reviews, relatedProducts }) {
   const router = useRouter();
   const {
     state: { cartItems },

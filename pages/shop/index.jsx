@@ -15,6 +15,8 @@ import {
 } from "@heroicons/react/solid";
 import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
+import { getProducts } from "../../dbOperations/productOperations";
+import { getCollections } from "../../dbOperations/collectionOperations";
 
 const colTypesName = ["Categories", "Colours", "Style", "Stones"];
 const newColTypesName = ["category", "color", "style", "stone"];
@@ -24,16 +26,12 @@ function classNames(...classes) {
 }
 
 export async function getServerSideProps() {
-  const products = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts?sort=new`
-  ).then((res) => res.json());
-  const collections = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/collections/getCollections`
-  ).then((res) => res.json());
+  const products = await getProducts({ sort: "new" });
+  const collections = await getCollections();
   return {
     props: {
-      products: products?.products,
-      collections: collections?.collections,
+      products: JSON.parse(JSON.stringify(products?.products)),
+      collections: JSON.parse(JSON.stringify(collections?.collections)),
     },
   };
 }

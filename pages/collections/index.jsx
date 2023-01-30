@@ -5,14 +5,13 @@ import HeroHeader from "../../components/sections/HeroHeader";
 import banner from "../../public/collections.jpg";
 import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
+import { getCollections } from "../../dbOperations/collectionOperations";
 
 export async function getStaticProps() {
-  const getCollections = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST ?? null}/api/collections/getCollections`
-  ).then((res) => res.json());
+  const getCollections = await getCollections();
   return {
     props: {
-      collections: getCollections?.collections,
+      collections: JSON.parse(JSON.stringify(getCollections?.collections)),
     },
   };
 }

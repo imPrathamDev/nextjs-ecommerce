@@ -1,8 +1,6 @@
 import CollectionsSection from "../components/sections/CollectionsSection";
-// import Features from "../components/sections/Features";
 import Secondary from "../components/sections/Secondary";
 import TrendingSection from "../components/sections/TrendingSection";
-// import FeatureCategories from "../components/sections/FeatureCategories";
 import { motion } from "framer-motion";
 import FeatureCategory from "../components/sections/FeatureCategory";
 import ProductSlider from "../components/sections/ProductSlider";
@@ -11,22 +9,19 @@ import HeroSlider from "../components/sections/HeroSection/HeroSlider";
 import Layouts from "../components/layouts/Layouts";
 import Contact from "../components/sections/ContactSection/Contact";
 import PageTitle from "../components/PageTitle";
+import { getProducts } from "../dbOperations/productOperations";
+import { getCollections } from "../dbOperations/collectionOperations";
 
 export async function getStaticProps() {
-  const products = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts`
-  ).then((response) => response.json());
-  const collections = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/collections/getCollections`
-  ).then((response) => response.json());
-  const newestProducts = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts?sort=new`
-  ).then((res) => res.json());
+  const products = await getProducts();
+  const collections = await getCollections();
+  const newestProducts = await getProducts({ sort: "new" });
+  console.log({ products, collections, newestProducts });
   return {
     props: {
-      products,
-      collections,
-      newestProducts,
+      products: JSON.parse(JSON.stringify(products)),
+      collections: JSON.parse(JSON.stringify(collections)),
+      newestProducts: JSON.parse(JSON.stringify(newestProducts)),
     },
   };
 }

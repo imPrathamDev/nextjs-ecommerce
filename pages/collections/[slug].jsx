@@ -18,6 +18,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import RangeSlider from "../../components/sections/RangeSlider";
 import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
+import { filterProducts } from "../../dbOperations/productOperations";
+import {
+  getCollection,
+  getCollections,
+} from "../../dbOperations/collectionOperations";
 
 const colTypesName = ["Categories", "Colours", "Style", "Stones"];
 const newColTypesName = ["category", "color", "style", "stone"];
@@ -28,30 +33,16 @@ function classNames(...classes) {
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
-  await connectdb();
-  const colloction = await Collection.findOne({ slug });
-  const products = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/filterProducts`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        keyword: colloction?.name,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((res) => res.json());
 
-  const collections = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/collections/getCollections`
-  ).then((res) => res.json());
+  const collection = await getCollection(slug);
+  const products = await filterProducts(slug);
+  const collections = await getCollections();
 
   return {
     props: {
-      products: products?.products,
-      collection: JSON.parse(JSON.stringify(colloction)),
-      collections: collections?.collections,
+      products: JSON.parse(JSON.stringify(products?.products)),
+      collection: JSON.parse(JSON.stringify(collection)),
+      collections: JSON.parse(JSON.stringify(collections?.collections)),
     },
   };
 }
