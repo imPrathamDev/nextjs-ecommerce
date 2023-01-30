@@ -4,6 +4,7 @@ import Link from "next/link";
 import HeroHeader from "../../components/sections/HeroHeader";
 import banner from "../../public/collections.jpg";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
 
 export async function getStaticProps() {
   const getCollections = await fetch(
@@ -22,10 +23,14 @@ const CollectionPage = ({ collections }) => {
   );
   return (
     <Layouts>
+      <PageTitle
+        title={"Collections"}
+        description={"Explore Reale's jewellery collections."}
+      />
       <div className="flex flex-col justify-center">
         <HeroHeader
           title="Explore Our Collections"
-          description="Check our collections you will see we provide many diffrent colllections of jewelleries."
+          description="Check our collections you will see we provide many different collections of jewellery."
           image={banner}
         />
         <div className="mx-auto my-8">
