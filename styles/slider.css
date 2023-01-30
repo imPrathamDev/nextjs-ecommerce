@@ -71,7 +71,7 @@
 }
 
 .main-hero .swiper-slide section .hero h1,
-.main-hero .swiper-slide section .hero h1 strong,
+.main-hero .swiper-slide section .hero strong,
 .main-hero .swiper-slide section .hero p {
   transform: translateY(-30px);
   opacity: 0;
@@ -79,7 +79,7 @@
 }
 
 .main-hero .swiper-slide-active section .hero h1,
-.main-hero .swiper-slide-active section .hero h1 strong,
+.main-hero .swiper-slide-active section .hero strong,
 .main-hero .swiper-slide-active section .hero p {
   transform: none;
   opacity: 1;
