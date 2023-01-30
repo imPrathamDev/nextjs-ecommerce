@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import style from "../../styles/module/toast.module.css";
 
 const Toast = ({ showToast, setShowToast }) => {
   function Timer(callback, delay) {
@@ -48,27 +49,33 @@ const Toast = ({ showToast, setShowToast }) => {
         {showToast.show && (
           <motion.div
             exit={{
-              y: 100,
-              opacity: 0.5,
+              y: 500,
+              // opacity: 0.2,
             }}
             animate={{
               y: 0,
             }}
             initial={{
-              y: 100,
+              y: 500,
             }}
+            transition={{ duration: 0.5 }}
             onMouseEnter={() => {
               if (timer) timer.pause();
             }}
             onMouseLeave={() => {
               if (timer) timer.resume();
             }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-12 left-12 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white/80 backdrop-blur-sm rounded-lg shadow-xl"
+            className={`fixed bottom-12 left-12 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white/80 backdrop-blur-sm rounded-lg shadow-xl transition-all border-2 border-transparent ${
+              showToast.error
+                ? "hover:border-red-100 hover:shadow-red-50"
+                : "hover:border-green-100 hover:shadow-green-50"
+            }`}
             style={{ zIndex: "9999" }}
           >
             <div
-              className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg animate-bounce ${
+              className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${
+                style.icon
+              } ${
                 showToast.error
                   ? "text-red-500 bg-red-100"
                   : "text-green-500 bg-green-100"
