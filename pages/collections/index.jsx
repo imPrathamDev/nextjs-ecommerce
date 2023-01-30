@@ -8,7 +8,7 @@ import PageTitle from "../../components/PageTitle";
 
 export async function getStaticProps() {
   const getCollections = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/collections/getCollections`
+    `${process.env.NEXT_PUBLIC_HOST ?? null}/api/collections/getCollections`
   ).then((res) => res.json());
   return {
     props: {
