@@ -7,9 +7,9 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { CartState } from "../../../context/Context";
 import party from "party-js";
-import easyinvoice from "easyinvoice";
 import InvoiceModel from "../../../components/models/InvoiceModel";
 import Layouts from "../../../components/layouts/Layouts";
+import PageTitle from "../../../components/PageTitle";
 
 export async function getServerSideProps(context) {
   await connectdb();
@@ -49,89 +49,13 @@ export default function OrderPage({ order, refresh }) {
     }
   }, []);
 
-  const InvoiceGen = async () => {
-    const result = await easyinvoice.createInvoice(structer);
-    await easyinvoice.download("myInvoice.pdf", result.pdf);
-  };
-
   const address = JSON.parse(order.address);
   const billingAddress = JSON.parse(order.billingAddress);
   const payment = JSON.parse(order.paymentInfo);
 
-  const structer = {
-    // "customize": {
-    //     "template": "PGgxIHN0eWxlPSJjb2xvcjpyZWQ7Ij5ISElJSTwvaDE" // Must be base64 encoded html. This example contains 'Hello World!' in base64
-    // },
-    images: {
-      logo: "https://public.easyinvoice.cloud/img/logo_en_original.png",
-      background: "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
-    },
-    sender: {
-      company: "Srya",
-      address: "7th Floor Capital Mall",
-      zip: "301001",
-      city: "Alwar",
-      custom1: "Rajasthan",
-      country: "India",
-      // "custom2": "custom value 2",
-      // "custom3": "custom value 3"
-    },
-    client: {
-      company: address?.firstName + address?.lastName,
-      address: address?.address,
-      zip: address?.pincode,
-      city: address?.city,
-      State: address?.state,
-      country: address?.country,
-      // "custom1": "custom value 1",
-      // "custom2": "custom value 2",
-      // "custom3": "custom value 3"
-    },
-    information: {
-      number: "2021.0001",
-      date: "12-12-2021",
-      "heello-gggg": "31-12-2021",
-    },
-    products: order.products.map((product) => {
-      return {
-        quantity: product?.qty,
-        description: product?._id?.title,
-        "tax-rate": 0,
-        price: product?.discPrice,
-      };
-    }),
-    "bottom-notice": "GST Included",
-    settings: {
-      currency: "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
-      // "locale": "nl-NL", // Defaults to en-US, used for number formatting (see docs)
-      // "taxNotation": "gst", // Defaults to vat
-      // "margin-top": 25, // Default to 25
-      // "margin-right": 25, // Default to 25
-      // "margin-left": 25, // Default to 25
-      // "margin-bottom": 25, // Default to 25
-      // "format": "Letter", // Defaults to A4
-      // "height": "1000px", // allowed units: mm, cm, in, px
-      // "width": "500px", // allowed units: mm, cm, in, px
-      // "orientation": "landscape", // portrait or landscape, defaults to portrait
-    },
-    // Used for translating the headers to your preferred language
-    // Defaults to English. Below example is translated to Dutch
-    // "translate": {
-    //     "invoice": "FACTUUR",
-    //     "number": "Nummer",
-    //     "date": "Datum",
-    //     "due-date": "Verloopdatum",
-    //     "subtotal": "Subtotaal",
-    //     "products": "Producten",
-    //     "quantity": "Aantal",
-    //     "price": "Prijs",
-    //     "product-total": "Totaal",
-    //     "total": "Totaal"
-    // },
-  };
-
   return (
     <Layouts>
+      <PageTitle title={"My Order"} />
       <section className="px-4 pt-8 pb-16 sm:px-6 sm:pt-24 lg:px-8 lg:py-32">
         <InvoiceModel isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className="max-w-3xl mx-auto">
