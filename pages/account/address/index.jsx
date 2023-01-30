@@ -1,37 +1,25 @@
 import React, { useState, useRef, Fragment, useEffect } from "react";
-import { getSession } from "next-auth/react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import NotFound from "../../../components/sections/NotFound";
 import Layouts from "../../../components/layouts/Layouts";
+import PageTitle from "../../../components/PageTitle";
+import AddressCard from "../../../components/card/AddressCard";
+import ShimmerAddressCard from "../../../components/card/ShimmerAddressCard";
+import { AnimatePresence, motion } from "framer-motion";
+import Toast from "../../../components/Toast/Toast";
 
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
-  const { user } = session;
-
-  return {
-    props: {
-      user,
-    },
-  };
-}
-
-function Address({ user }) {
-  console.log(user);
+function Address() {
   const [data, setData] = useState({
     isOpen: false,
     action: "",
     addressId: "",
   });
+  const [toast, setToast] = useState({
+    show: false,
+    error: false,
+    msg: "",
+  });
+  const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState([]);
   const [changeTrigger, setChangeTrigger] = useState(false);
   const completeButtonRef = useRef(null);
@@ -45,26 +33,23 @@ function Address({ user }) {
     phone: "",
   });
   const [addressId, setAddressId] = useState(null);
-  useEffect(() => {
-    async function handlerGetAddresss() {
-      const userAddress = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/address/getAddress`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            userId: user?._id,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((response) => response.json());
-      if (userAddress.success) {
-        setAddress(userAddress?.address);
+
+  async function handlerGetAddress() {
+    const userAddress = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/address`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    ).then((response) => response.json());
+    if (userAddress.success) {
+      setAddress(userAddress?.data);
     }
-    handlerGetAddresss();
-  }, [changeTrigger]);
+    setLoading(false);
+  }
+
   const handlerChange = (e) => {
     if (e.target.name === "firstname") {
       setNewAddress((prevState) => ({
@@ -99,11 +84,10 @@ function Address({ user }) {
       newAddress?.phone > 0
     ) {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/address/addAddress`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/address`,
         {
-          method: data?.action === "ADD_ADDRESS" ? "POST" : "PUT",
+          method: data?.action === "ADD_ADDRESS" ? "POST" : "PATCH",
           body: JSON.stringify({
-            userId: user?._id,
             firstName: newAddress?.firstName,
             lastName: newAddress?.lastName,
             address: newAddress?.address,
@@ -131,49 +115,36 @@ function Address({ user }) {
         });
         setChangeTrigger(!changeTrigger);
         setData((prev) => ({ ...prev, isOpen: false }));
-        toast.success(
-          data?.action === "ADD_ADDRESS" ? "Address Added!" : "Address Updated",
-          {
-            position: "bottom-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }
-        );
+        setToast({
+          show: true,
+          msg:
+            data?.action === "ADD_ADDRESS"
+              ? "Address Added!"
+              : "Address Updated",
+          error: false,
+        });
       } else {
-        toast.error(response.error, {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+        setToast({
+          show: true,
+          error: true,
+          msg: response.error,
         });
       }
     } else {
-      toast.error("Invalid Request trt", {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      setToast({
+        show: true,
+        error: true,
+        msg: "Invalid Request",
       });
     }
   };
 
   const handlerDelete = async (id) => {
     const deleteRes = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/address/addAddress`,
+      `${process.env.NEXT_PUBLIC_HOST}/api/address`,
       {
         method: "DELETE",
         body: JSON.stringify({
-          userId: user?._id,
           addressId: id,
         }),
         headers: {
@@ -184,123 +155,86 @@ function Address({ user }) {
 
     if (deleteRes.success) {
       setChangeTrigger(!changeTrigger);
-      toast.success("Address Deleted", {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      setToast({
+        show: true,
+        msg: "Address Deleted",
+        error: false,
       });
     } else {
-      toast.error(deleteRes.error, {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      setToast({
+        show: true,
+        error: true,
+        msg: deleteRes.error,
       });
     }
   };
 
+  useEffect(() => {
+    handlerGetAddress();
+  }, [changeTrigger]);
+
   return (
     <Layouts>
+      <PageTitle title={"Address"} />
       <section className="px-4 py-12">
-        <ToastContainer
-          position="bottom-left"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        <Toast showToast={toast} setShowToast={setToast} />
         <div className="mx-auto">
           <div className="text-center">
-            <h1 className="text-2xl font-Cinzel font-semibold text-primary">
+            <h1
+              onClick={() =>
+                setToast({
+                  show: true,
+                  msg: "Test Message",
+                  error: false,
+                })
+              }
+              className="text-2xl font-Cinzel font-semibold text-primary"
+            >
               My Address
             </h1>
           </div>
           <div className="flex justify-center">
-            {address.length > 0 ? (
+            <AnimatePresence>
               <div className="w-full max-w-2xl">
-                {address.map((addres) => (
-                  <div
-                    key={addres?._id}
-                    className="text-base leading-6 bg-white border-t border-b border-gray-200 shadow-sm sm:rounded-lg sm:border my-2 p-4"
-                  >
-                    <div className="">
-                      <h4 className="text-lg font-semibold text-primary-black">
-                        {addres?.firstName} {addres?.lastName}
-                      </h4>
-                      <p>{addres?.address}</p>
-                      <p>
-                        {addres?.city} ({addres?.pincode}), {addres?.state},{" "}
-                        {addres?.country}
-                      </p>
-                      {addres.phone && <p>Phone: {addres?.phone}</p>}
-                    </div>
-                    <div className="w-full flex items-center justify-end gap-2 -mt-4 -mb-2 text-gray-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        onClick={() => {
-                          setData((prevData) => ({
-                            ...prevData,
-                            isOpen: true,
-                            action: "UPDATE_ADDRESS",
-                            addressId: addres?._id,
-                          }));
-                          setNewAddress({
-                            firstName: addres?.firstName,
-                            lastName: addres?.lastName,
-                            address: addres?.address,
-                            city: addres?.city,
-                            state: addres?.state,
-                            pincode: addres?.pincode,
-                            phone: addres?.phone,
-                          });
-                        }}
-                        className="h-6 w-6 hover:text-primary transition-all transform hover:scale-110 hover:rotate-12 cursor-pointer"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                        />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        onClick={() => handlerDelete(addres?._id)}
-                        className="h-6 w-6 hover:text-red-500 transition-all transform hover:scale-110 cursor-pointer"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </div>
+                {loading ? (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0.2 }}
+                      className="flex flex-col gap-y-2 mt-4"
+                    >
+                      {[0, 1].map((index) => (
+                        <React.Fragment key={index}>
+                          <ShimmerAddressCard />
+                        </React.Fragment>
+                      ))}
+                    </motion.div>
+                  </>
+                ) : address.length > 0 ? (
+                  address.map((addres) => (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0.2 }}
+                    >
+                      <AddressCard
+                        address={addres}
+                        setNewAddress={setNewAddress}
+                        setData={setData}
+                        handlerDelete={handlerDelete}
+                      />
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="my-8 text-center">
+                    <NotFound message={"Zero Address Found ^_^"} />
                   </div>
-                ))}
+                )}
               </div>
-            ) : (
-              <div className="my-8 text-center">
-                <NotFound message={"Zero Address Found ^_^"} />
-              </div>
-            )}
+
+              {}
+            </AnimatePresence>
           </div>
           <div className="mt-12 text-center">
             <button
@@ -352,7 +286,7 @@ function Address({ user }) {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-primary-white ring-2 ring-primary p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Panel className="w-full max-w-xl transform overflow-hidden bg-primary-white ring-2 ring-primary p-6 text-left align-middle shadow-xl transition-all">
                     <div className="flex items-center">
                       <Dialog.Title
                         as="h3"
