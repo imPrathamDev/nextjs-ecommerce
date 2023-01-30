@@ -7,9 +7,9 @@ import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
 
 export async function getStaticProps() {
-  const getCollections = await fetch(`/api/collections/getCollections`).then(
-    (res) => res.json()
-  );
+  const getCollections = await fetch(
+    `${process.env.NEXT_PUBLIC_HOST ?? null}/api/collections/getCollections`
+  ).then((res) => res.json());
   return {
     props: {
       collections: getCollections?.collections,
