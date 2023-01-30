@@ -6,17 +6,10 @@ import { getSession } from "next-auth/react";
 import OrdersCard from "../../../components/card/OrdersCard";
 import NotFound from "../../../components/sections/NotFound";
 import Layouts from "../../../components/layouts/Layouts";
+import PageTitle from "../../../components/PageTitle";
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx);
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
   const { user } = session;
   let myOrders = [];
   if (user) {
@@ -35,7 +28,6 @@ export async function getServerSideProps(ctx) {
       };
     }
   }
-  console.log(myOrders);
   return {
     props: {
       user,
@@ -44,9 +36,10 @@ export async function getServerSideProps(ctx) {
   };
 }
 
-export default function MyOrders({ user, myOrders }) {
+export default function MyOrders({ myOrders }) {
   return (
     <Layouts>
+      <PageTitle title={"My Orders"} />
       <div className="">
         <div className="py-8 sm:py-16">
           <div className="max-w-[90rem] mx-auto sm:px-2 lg:px-8">
