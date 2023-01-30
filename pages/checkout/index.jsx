@@ -1,81 +1,55 @@
-import React from "react";
-import { Listbox, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useState } from "react";
+import { Switch } from "@headlessui/react";
 import { CartState } from "../../context/Context";
 import Link from "next/link";
-import Image from "next/image";
-import Head from "next/head";
 import Script from "next/script";
 import { signOut, getSession } from "next-auth/react";
-import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import party from "party-js";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Layouts from "../../components/layouts/Layouts";
+import PageTitle from "../../components/PageTitle";
+import ShippingAddress from "../../components/checkout/ShippingAddress";
+import { Countries, DEFAULT_SHIPPING_PRICE } from "../../static/staticData";
+import BillingAddress from "../../components/checkout/BillingAddress";
+import ProductsList from "../../components/checkout/ProductsList";
+import ShimmerProductsList from "../../components/checkout/ShimmerProductsList";
+import Toast from "../../components/Toast/Toast";
+import CouponCode from "../../components/checkout/CouponCode";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
   const { user } = session;
-  const respone = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/products/getProducts`
-  );
-  const allProducts = await respone.json();
-
-  const getAddress = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST}/api/address/getAddress`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        userId: user?._id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((respone) => respone.json());
   return {
     props: {
-      allProducts: allProducts.products,
       user,
-      userAddress: getAddress.success ? getAddress?.address : [],
     },
   };
 }
 
-const Countries = [
-  {
-    name: "India",
-  },
-];
-
-function Checkout({ allProducts, user, userAddress }) {
+function Checkout({ user }) {
   const router = useRouter();
-  const [cartData, setCartData] = React.useState([]);
-  const [selectedAddress, setSelectedAddress] = React.useState(userAddress[0]);
+  const [cartData, setCartData] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAddress, setSelectedAddress] = useState([]);
   const {
     state: { cartItems },
     dispatch,
   } = CartState();
-  const [subtotal, setSubtotal] = React.useState(0);
-  const [shippingPrice, setShippingPrice] = React.useState(0);
-  const [total, setTotal] = React.useState(0);
-  const [isChecked, setIsChecked] = React.useState(false);
-  const [country, setCountry] = React.useState(Countries[0]);
-  const [isBillingAddress, setIsBillingAddress] = React.useState(true);
-  const [coupon, setCoupon] = React.useState({
+  const [subtotal, setSubtotal] = useState(0);
+  const [shippingPrice, setShippingPrice] = useState(DEFAULT_SHIPPING_PRICE);
+  const [total, setTotal] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
+  const [country, setCountry] = useState(Countries[0]);
+  const [isBillingAddress, setIsBillingAddress] = useState(true);
+  const [userAddress, setUserAddress] = useState([]);
+  const [coupon, setCoupon] = useState({
     code: "",
     isDiscounted: false,
     calDiscount: 0,
   });
-
-  const [shippingData, setShippingData] = React.useState({
+  const [shippingData, setShippingData] = useState({
     firstName: "",
     lastName: "",
     address: "",
@@ -84,7 +58,7 @@ function Checkout({ allProducts, user, userAddress }) {
     pincode: "",
     phone: "",
   });
-  const [billingData, setBillingData] = React.useState({
+  const [billingData, setBillingData] = useState({
     firstName: "",
     lastName: "",
     address: "",
@@ -92,42 +66,11 @@ function Checkout({ allProducts, user, userAddress }) {
     state: "",
     pincode: "",
   });
-
-  React.useEffect(() => {
-    setCartData(cartItems);
-    setSubtotal(
-      cartItems.reduce(
-        (acc, curr) =>
-          acc +
-          allProducts.filter((p) => p._id === curr._id)?.[0]?.discPrice *
-            curr.qty,
-        0
-      )
-    );
-    setTotal(
-      isChecked
-        ? subtotal - coupon?.calDiscount + shippingPrice + 50
-        : subtotal - coupon?.calDiscount + shippingPrice
-    );
-    if (!cartItems.length > 0) {
-      router.push("/");
-      toast.warning("Empty Cart", {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-  }, [cartItems, subtotal, total, shippingPrice, coupon]);
-
-  React.useEffect(() => {
-    if (userAddress.length > 0) {
-      setShippingData(selectedAddress);
-    }
-  }, [selectedAddress]);
+  const [toast, setToast] = useState({
+    show: false,
+    msg: "",
+    error: false,
+  });
 
   const handleChange = (e) => {
     if (e.target.name === "giftCheck") {
@@ -154,15 +97,7 @@ function Checkout({ allProducts, user, userAddress }) {
   };
 
   const initiatePayment = async () => {
-    toast.info(`Please wait ${user?.name.toLowerCase()}`, {
-      position: "bottom-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    setToast({ show: true, msg: `Please wait processing`, error: false });
     const fullBillingAddress = {
       firstName: billingData?.firstName,
       lastName: billingData?.lastName,
@@ -208,15 +143,7 @@ function Checkout({ allProducts, user, userAddress }) {
     const orderJSON = await orderResponse.json();
     let options;
     if (!orderJSON.success) {
-      toast.error(orderJSON.error, {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setToast({ show: true, msg: orderJSON.error, error: true });
     } else {
       options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -300,37 +227,13 @@ function Checkout({ allProducts, user, userAddress }) {
         if (validatePincode?.[0]?.Status === "Success") {
           initiatePayment();
         } else {
-          toast.error("Invalid Pincode", {
-            position: "bottom-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          setToast({ show: true, msg: `Invalid PinCode`, error: true });
         }
       } else {
-        toast.error("Invalid Phone Number", {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        setToast({ show: true, msg: `Invalid Phone Number`, error: true });
       }
     } else {
-      toast.error("Something Missing", {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setToast({ show: true, msg: `Something missing`, error: true });
     }
   };
 
@@ -360,15 +263,7 @@ function Checkout({ allProducts, user, userAddress }) {
           ? (subtotal * couponRes?.value) / 100
           : couponRes?.value,
       }));
-      toast.success("Coupon Applied", {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setToast({ show: true, msg: `Coupon Applied`, error: false });
       party.confetti(document.getElementById("counpoContainer"), {
         count: party.variation.range(20, 40),
       });
@@ -379,43 +274,95 @@ function Checkout({ allProducts, user, userAddress }) {
         isPercent: null,
         codeId: null,
         isDiscounted: false,
+        calDiscount: 0,
       }));
-      toast.error(couponRes?.error, {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      setToast({ show: true, msg: couponRes?.error, error: true });
     }
   };
+
+  const handlerGetAddress = async () => {
+    fetch(`${process.env.NEXT_PUBLIC_HOST}/api/address`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          setUserAddress(data.data);
+          setSelectedAddress(data.data[0]);
+        }
+      });
+  };
+
+  const handlerGetProducts = async (cartData) => {
+    let ids = [];
+    cartData.forEach((element) => {
+      ids.push(element._id);
+    });
+    fetch(`${process.env.NEXT_PUBLIC_HOST}/api/products/getProductsByIds`, {
+      method: "POST",
+      body: JSON.stringify({
+        ids,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProducts(data.products);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    handlerGetProducts(cartItems);
+    setCartData(cartItems);
+    handlerGetAddress();
+  }, []);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      setSubtotal(
+        cartItems.reduce(
+          (acc, curr) =>
+            acc +
+            products.filter((p) => p._id === curr._id)?.[0]?.discPrice *
+              curr.qty,
+          0
+        )
+      );
+      setTotal(
+        isChecked
+          ? subtotal - coupon?.calDiscount + shippingPrice + 50
+          : subtotal - coupon?.calDiscount + shippingPrice
+      );
+    }
+    if (!cartItems.length > 0) {
+      router.push("/");
+      setToast({ show: true, msg: `Empty Cart`, error: true });
+    }
+  }, [cartItems, subtotal, total, shippingPrice, coupon, products, isChecked]);
+
+  useEffect(() => {
+    if (userAddress.length > 0) {
+      setShippingData(selectedAddress);
+    }
+  }, [selectedAddress, userAddress]);
+
   return (
     <Layouts>
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0"
-        />
-      </Head>
+      <PageTitle title={"Checkout"} />
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="afterInteractive"
       />
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <section className="overflow-hidden">
-        <div className="container px-5 pb-12 pt-8 mx-auto">
+        <Toast showToast={toast} setShowToast={setToast} />
+        <div className="container px-14 pb-12 pt-8 mx-auto">
           <div className="flex flex-col xl:flex-row lg:flex-row">
             <div className="flex-1">
               <h3 className="text-3xl font-semibold font-Cinzel mb-4">
@@ -427,7 +374,7 @@ function Checkout({ allProducts, user, userAddress }) {
                 <div className="flex items-center mt-2">
                   <img
                     src={user?.image}
-                    alt="User Iamge"
+                    alt="User Image"
                     className="w-10 h-10 rounded-full shadow-sm z-10"
                   />
                   <div className="ml-2 flex flex-col text-sm">
@@ -448,530 +395,156 @@ function Checkout({ allProducts, user, userAddress }) {
 
                   {/*Creating Shipping Details Form*/}
                   <div className="mt-4">
-                    <form method="post">
-                      <Listbox
-                        value={selectedAddress}
-                        onChange={setSelectedAddress}
-                      >
-                        <div className="relative mt-1">
-                          <Listbox.Button className="relative flex items-center text-left w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40">
-                            <div className="flex flex-col">
-                              <span className="text-xs -mb-1">
-                                Saved Address
-                              </span>
-                              <span className="text-base truncate">
-                                {selectedAddress.address
-                                  ? selectedAddress?.address
-                                  : "Use a new address"}
-                              </span>
-                            </div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="ml-auto h-6 w-6"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
-                          </Listbox.Button>
-
-                          <Transition
-                            as={React.Fragment}
-                            leave="transition ease-in duration-100"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                          >
-                            <Listbox.Options className="absolute z-20 shadow-lg w-full border border-primary-black bg-white">
-                              {userAddress.map((option, key) => (
-                                <Listbox.Option
-                                  key={key}
-                                  value={option}
-                                  className={({ active }) =>
-                                    `relative mt-1 w-full overflow-auto bg-white text-sm font-medium cursor-pointer ${
-                                      active ? "bg-primary-light" : "bg-white"
-                                    }`
-                                  }
-                                >
-                                  {({ selected }) => (
-                                    <>
-                                      <span
-                                        className={`block truncate p-1 ${
-                                          selected
-                                            ? "font-semibold bg-primary-light"
-                                            : "font-medium"
-                                        }`}
-                                      >
-                                        <span className="">
-                                          {option?.firstName} {option?.lastName}
-                                        </span>
-                                        <p className="">{option?.address}</p>
-                                      </span>
-                                    </>
-                                  )}
-                                </Listbox.Option>
-                              ))}
-                            </Listbox.Options>
-                          </Transition>
-                        </div>
-                      </Listbox>
-
-                      <Listbox value={country} onChange={setCountry}>
-                        <Listbox.Button className="flex items-center text-left w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40">
-                          <div className="flex flex-col">
-                            <span className="text-xs -mb-1">
-                              Select Country
-                            </span>
-                            <span className="text-base">
-                              {country.name}(Currently Only {country.name} is
-                              Available)
-                            </span>
-                          </div>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="ml-auto h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </Listbox.Button>
-
-                        <Transition
-                          as={React.Fragment}
-                          leave="transition ease-in duration-100"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                        >
-                          <Listbox.Options className="mt-1 p-1 z-10 border border-primary-black max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-1 ring-primary-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {Countries.map((option, key) => (
-                              <Listbox.Option
-                                key={key}
-                                value={option}
-                                className={({ active }) =>
-                                  `bg-white text-sm font-medium transition-all ${
-                                    active ? "bg-primary-light" : "bg-white"
-                                  }`
-                                }
-                              >
-                                {({ selected }) => (
-                                  <>
-                                    <span
-                                      className={`block truncate p-1 ${
-                                        selected
-                                          ? "font-semibold bg-primary-light"
-                                          : "font-medium"
-                                      }`}
-                                    >
-                                      {option.name}
-                                    </span>
-                                  </>
-                                )}
-                              </Listbox.Option>
-                            ))}
-                          </Listbox.Options>
-                        </Transition>
-                      </Listbox>
-                      <div className="flex items-center justify-between gap-2">
-                        <input
-                          type="text"
-                          name="firstname"
-                          id="firstname"
-                          placeholder="First Name"
-                          value={shippingData?.firstName}
-                          onChange={handlerChange}
-                          className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                        />
-                        <input
-                          type="text"
-                          name="lastname"
-                          id="lastname"
-                          placeholder="Last Name"
-                          value={shippingData?.lastName}
-                          onChange={handlerChange}
-                          className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="address"
-                        id="address"
-                        placeholder="Address"
-                        value={shippingData?.address}
-                        onChange={handlerChange}
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
+                    <div className="">
+                      <ShippingAddress
+                        handlerChange={handlerChange}
+                        shippingData={shippingData}
+                        setSelectedAddress={setSelectedAddress}
+                        selectedAddress={selectedAddress}
+                        userAddress={userAddress}
+                        country={country}
+                        setCountry={setCountry}
                       />
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          name="city"
-                          id="city"
-                          placeholder="City"
-                          value={shippingData?.city}
-                          onChange={handlerChange}
-                          className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                        />
-                        <input
-                          type="text"
-                          name="state"
-                          id="state"
-                          placeholder="State"
-                          value={shippingData?.state}
-                          onChange={handlerChange}
-                          className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                        />
-                        <input
-                          type="number"
-                          name="pincode"
-                          id="pincode"
-                          placeholder="Pincode"
-                          value={shippingData?.pincode}
-                          onChange={handlerChange}
-                          className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                        />
-                      </div>
-                      <input
-                        type="number"
-                        name="phone"
-                        id="phone"
-                        placeholder="Phone"
-                        value={shippingData?.phone}
-                        onChange={handlerChange}
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                      />
-
-                      {!isBillingAddress && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.5 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.5 }}
-                          transition={{ duration: 0.5 }}
-                          className="my-4"
-                        >
-                          <h4 className="font-medium text-lg">
-                            Billing information
-                          </h4>
-                          <div className="flex items-center justify-between gap-2">
-                            <input
-                              type="text"
-                              name="billingFirstName"
-                              id="billingFirstName"
-                              placeholder="First Name"
-                              value={billingData?.firstName}
-                              onChange={handlerChange}
-                              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                            />
-                            <input
-                              type="text"
-                              name="billingLastName"
-                              id="billingLastName"
-                              placeholder="Last Name"
-                              value={billingData?.lastName}
-                              onChange={handlerChange}
-                              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                            />
-                          </div>
-                          <input
-                            type="text"
-                            name="billingAddress"
-                            id="billingAddress"
-                            placeholder="Billing Address"
-                            value={billingData?.address}
-                            onChange={handlerChange}
-                            className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
+                      <AnimatePresence>
+                        {!isBillingAddress && (
+                          <BillingAddress
+                            handlerChange={handlerChange}
+                            billingData={billingData}
                           />
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              name="billingCity"
-                              id="billingCity"
-                              placeholder="Billing City"
-                              value={billingData?.city}
-                              onChange={handlerChange}
-                              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                            />
-                            <input
-                              type="text"
-                              name="billingState"
-                              id="billingState"
-                              placeholder="Billing State"
-                              value={billingData?.state}
-                              onChange={handlerChange}
-                              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                            />
-                            <input
-                              type="number"
-                              name="billingPincode"
-                              id="billingPincode"
-                              placeholder="Billing Pincode"
-                              value={billingData?.pincode}
-                              onChange={handlerChange}
-                              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-primary-black focus:border-primary-semi-light dark:focus:border-primary-semi-light focus:ring-primary-semi-light focus:outline-none focus:ring focus:ring-opacity-40"
-                            />
-                          </div>
-                        </motion.div>
-                      )}
+                        )}
+                      </AnimatePresence>
 
-                      <div className="flex items-center my-4">
-                        <input
-                          type="checkbox"
-                          value={isChecked}
-                          chacked={isChecked}
-                          onChange={handleChange}
-                          id="check"
-                          name="giftCheck"
-                          className="w-4 h-4 text-primary-dark bg-gray-100 rounded border-gray-300 focus:ring-primary focus:ring-2"
-                        />
-                        <label
-                          htmlFor="checkbox"
-                          className="ml-2 text-md font-medium text-gray-900"
+                      <div className="flex items-center my-4 gap-2">
+                        <Switch
+                          checked={isChecked}
+                          onChange={setIsChecked}
+                          className={`${
+                            isChecked ? "bg-primary-light/90" : "bg-gray-300"
+                          } relative inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                         >
-                          Gifting Someone (50 will be extra)
-                        </label>
+                          <span className="sr-only">Use setting</span>
+                          <span
+                            aria-hidden="true"
+                            className={`${
+                              isChecked ? "translate-x-6" : "translate-x-0"
+                            } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-primary-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                          />
+                        </Switch>
+                        <span>Gifting Someone (50 will be extra)</span>
                       </div>
-                      <div className="flex items-center my-4">
-                        <input
-                          type="checkbox"
-                          value={isBillingAddress}
+                      <div className="flex items-center my-4 gap-2">
+                        <Switch
                           checked={isBillingAddress}
-                          onChange={handleChange}
-                          id="billingAddress"
-                          name="billingAddress"
-                          className="w-4 h-4 text-primary-dark bg-gray-100 rounded border-gray-300 focus:ring-primary focus:ring-2"
-                        />
-                        <label
-                          htmlFor="checkbox"
-                          className="ml-2 text-md font-medium text-gray-900"
+                          onChange={setIsBillingAddress}
+                          className={`${
+                            isBillingAddress
+                              ? "bg-primary-light/90"
+                              : "bg-gray-300"
+                          } relative inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                         >
-                          Billing address same as shipping
-                        </label>
+                          <span className="sr-only">Use setting</span>
+                          <span
+                            aria-hidden="true"
+                            className={`${
+                              isBillingAddress
+                                ? "translate-x-6"
+                                : "translate-x-0"
+                            } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-primary-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                          />
+                        </Switch>
+                        <span>Billing Address same as shipping</span>
                       </div>
-                    </form>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col content-between bg-white p-2 rounded-md">
-              <ul className="h-fit max-h-96  divide-y overflow-y-auto custom-scrollbar">
-                {cartData.map((product) => (
-                  <li
-                    key={product._id}
-                    className="flex py-4 group cursor-pointer"
-                  >
-                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <Image
-                        src={
-                          allProducts.filter((p) => p._id === product._id)?.[0]
-                            ?.images?.[0]?.url
-                        }
-                        alt={
-                          allProducts.filter((p) => p._id === product._id)?.[0]
-                            ?.title
-                        }
-                        className="h-full w-full object-cover object-center transform transition-all group-hover:scale-110"
-                        width={"100%"}
-                        height={"100%"}
-                      />
-                    </div>
-
-                    <div className="ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div className="flex justify-between text-base font-medium text-primary-black">
-                          <h3 className="font-Cinzel font-medium group-hover:underline">
-                            <Link href="/">
-                              {
-                                allProducts.filter(
-                                  (p) => p._id === product._id
-                                )?.[0]?.title
-                              }
-                            </Link>
-                          </h3>
-                          <p className="ml-4">
-                            ₹
-                            {
-                              allProducts.filter(
-                                (p) => p._id === product._id
-                              )?.[0]?.discPrice
-                            }
-                          </p>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-500">
-                          Category Here
-                        </p>
-                      </div>
-                      <div className="flex flex-1 items-end justify-between text-sm">
-                        <div className="flex items-center gap-1 text-gray-500">
-                          <button
-                            onClick={() =>
-                              dispatch({
-                                type: "CHANGE_QTY",
-                                payload: {
-                                  _id: product._id,
-                                  qty: product.qty === 1 ? 1 : product.qty - 1,
-                                },
-                              })
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M18 12H6"
-                              />
-                            </svg>
-                          </button>
-                          <p className="">Qty {product.qty}</p>
-                          <button
-                            onClick={() =>
-                              dispatch({
-                                type: "CHANGE_QTY",
-                                payload: {
-                                  _id: product._id,
-                                  qty:
-                                    product.qty >=
-                                    allProducts.filter(
-                                      (p) => p._id === product._id
-                                    )?.[0]?.availableQty
-                                      ? allProducts.filter(
-                                          (p) => p._id === product._id
-                                        )?.[0]?.availableQty
-                                      : product.qty + 1,
-                                },
-                              })
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                        <div className="flex">
-                          <button
-                            type="button"
-                            className="font-medium text-primary-semi-light hover:text-primary-light"
-                            onClick={() =>
-                              dispatch({
-                                type: "REMOVE_FROM_CART",
-                                payload: product,
-                              })
-                            }
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex flex-col content-between bg-white p-2 rounded-md lg:w-1/3">
+              {loading ? (
+                <>
+                  <div className="flex flex-col gap-y-2">
+                    {[0, 1, 2, 3].map((key) => (
+                      <Fragment key={key}>
+                        <ShimmerProductsList />
+                      </Fragment>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <ProductsList
+                  cartData={cartData}
+                  products={products}
+                  dispatch={dispatch}
+                />
+              )}
 
               <div className="mt-auto px-6 ">
-                <div className="my-1">
-                  <div
-                    id="counpoContainer"
-                    className="flex item-center justify-between w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border-2 border-primary-semi-light"
-                  >
-                    <div className="relative z-0">
-                      <input
-                        type="text"
-                        id="coupon"
-                        name="coupon"
-                        value={coupon?.code}
-                        onChange={handlerChange}
-                        className="block py-2 px-0 w-full text-primary-black bg-transparent appearance-none focus:outline-none focus:ring-0  peer"
-                        placeholder=" "
-                      />
-                      <label
-                        for="coupon"
-                        className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-primary peer-focus-within:mt-2 peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                <div className="my-4">
+                  <CouponCode
+                    handlerCoupon={handlerCoupon}
+                    coupon={coupon}
+                    handlerChange={handlerChange}
+                  />
+                  <AnimatePresence>
+                    {coupon?.isDiscounted && (
+                      <motion.p
+                        initial={{ opacity: 0.2 }}
+                        exit={{ opacity: 0.2 }}
+                        animate={{ opacity: 1 }}
+                        class="mt-2 text-xs text-green-500"
                       >
-                        Coupon Code
-                      </label>
-                    </div>
-                    <button
-                      onClick={handlerCoupon}
-                      className="font-Cinzel font-semibold text-lg hover:text-primary hover:underline transition-all"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                  {coupon?.isDiscounted && (
-                    <p
-                      id="filled_error_help"
-                      class="mt-2 text-xs text-green-500"
-                    >
-                      <span class="font-medium">Wow!</span> coupon applied of{" "}
-                      {coupon?.isPercent
-                        ? `${coupon?.value}%`
-                        : `₹${coupon?.value}`}{" "}
-                      off.
-                    </p>
-                  )}
+                        <span class="font-medium">Wow!</span> coupon applied of{" "}
+                        {coupon?.isPercent
+                          ? `${coupon?.value}%`
+                          : `₹${coupon?.value}`}{" "}
+                        off.
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
                 <div className="my-1 flex items-center justify-between">
                   <p>Subtotal</p>
-                  <span>₹{subtotal}</span>
+                  {loading ? (
+                    <div className="h-4 w-14 bg-gray-300 rounded-sm animate-pulse"></div>
+                  ) : (
+                    <span>₹{subtotal}</span>
+                  )}
                 </div>
 
-                {coupon?.isDiscounted && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="my-1 flex items-center justify-between"
-                  >
-                    <p>Discount</p>
-                    <span>
-                      -₹
-                      {coupon?.isPercent
-                        ? (coupon?.calDiscount * coupon?.value) / 100
-                        : coupon?.value}
-                    </span>
-                  </motion.div>
-                )}
-
-                {isChecked && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.5 }}
-                    className="my-1 flex items-center justify-between"
-                  >
-                    <p>Gift wrapping</p>
-                    <span>₹50</span>
-                  </motion.div>
-                )}
+                <AnimatePresence>
+                  {coupon?.isDiscounted && (
+                    <motion.div
+                      initial={{ opacity: 0.2, x: 700 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0.2, x: 700 }}
+                      transition={{ duration: 0.5 }}
+                      className="my-1 flex items-center justify-between"
+                    >
+                      <p>Discount</p>
+                      <span>
+                        -₹
+                        {coupon?.isPercent
+                          ? (coupon?.calDiscount * coupon?.value) / 100
+                          : coupon?.value}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <AnimatePresence>
+                  {isChecked && (
+                    <motion.div
+                      initial={{ opacity: 0.2, x: 700 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0.2, x: 700 }}
+                      transition={{ duration: 0.5 }}
+                      className="my-1 flex items-center justify-between"
+                    >
+                      <p>Gift wrapping</p>
+                      <span>₹50</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="my-0.5 flex items-center justify-between">
                   <p>Shipping</p>
@@ -982,10 +555,14 @@ function Checkout({ allProducts, user, userAddress }) {
 
                 <div className="my-4 flex items-center justify-between">
                   <p className="font-medium">Total</p>
-                  <span className="text-2xl font-medium font-Cinzel text-primary">
-                    <span className="text-base">₹</span>
-                    {total}
-                  </span>
+                  {loading ? (
+                    <div className="h-6 w-12 bg-gray-300 rounded-sm animate-pulse"></div>
+                  ) : (
+                    <span className="text-2xl font-medium font-Cinzel text-primary">
+                      <span className="text-base">₹</span>
+                      {total}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1025,7 +602,7 @@ function Checkout({ allProducts, user, userAddress }) {
                 </span>
               </span>
 
-              <span className="text-sm font-medium transition-all group-hover:mr-6">
+              <span className="text-sm font-medium transition-all group-hover:mr-8">
                 Pay Now
               </span>
             </button>
