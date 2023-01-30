@@ -1,78 +1,29 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import React from "react";
-import { Navigation, Pagination, Autoplay } from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import HeroSection from "./HeroSection";
-
-const heroBanners = [
-  {
-    title: "Traditional Jewellery",
-    secondaryTitle: "On Sriya.",
-    url: "http://localhost:3000/",
-    image: {
-      url: "https://firebasestorage.googleapis.com/v0/b/replay-chat-dd920.appspot.com/o/j-images%2Fbanner%20(1).png?alt=media&token=8963b61f-bf65-4c95-b5ef-f9be13584397",
-      alt: "Sriya",
-    },
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, reprehenderit veniam molestias laudantium quasi sed neque laboriosam autem.",
-    buttonTitle: "Shop Now",
-  },
-  {
-    title: "New Collections",
-    secondaryTitle: "On Sriya.",
-    url: "http://localhost:3000/",
-    image: {
-      url: "https://firebasestorage.googleapis.com/v0/b/replay-chat-dd920.appspot.com/o/j-images%2Fbanner%20(2).png?alt=media&token=23fa4b19-2144-4171-9b8a-dc696ccf2327",
-      alt: "Sriya",
-    },
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, reprehenderit veniam molestias laudantium quasi sed neque laboriosam autem.",
-    buttonTitle: "Shop Now",
-  },
-  {
-    title: "Shop Rings",
-    secondaryTitle: "On Sriya.",
-    url: "http://localhost:3000/",
-    image: {
-      url: "https://firebasestorage.googleapis.com/v0/b/replay-chat-dd920.appspot.com/o/j-images%2Fbanner%20(3).png?alt=media&token=96fdfc5b-9ae0-4800-a890-ec8e0ef241d7",
-      alt: "Sriya",
-    },
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, reprehenderit veniam molestias laudantium quasi sed neque laboriosam autem.",
-    buttonTitle: "Shop Rings",
-  },
-  {
-    title: "Indian Collections",
-    secondaryTitle: "On Sriya.",
-    url: "http://localhost:3000/",
-    image: {
-      url: "https://firebasestorage.googleapis.com/v0/b/replay-chat-dd920.appspot.com/o/j-images%2Fbanner%20(4).png?alt=media&token=9e5e97cd-d2eb-4aa4-8f4e-91027014b904",
-      alt: "Sriya",
-    },
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, reprehenderit veniam molestias laudantium quasi sed neque laboriosam autem.",
-    buttonTitle: "Shop Now",
-  },
-];
+import { heroBanners } from "../../../static/staticData";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper";
+import { EffectFade } from "swiper";
+import "swiper/css";
+import "swiper/css/effect-fade";
 
 function HeroSlider() {
   return (
     <div>
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        spaceBetween={50}
+        className="relative group main-hero"
+        spaceBetween={0}
         slidesPerView={1}
-        navigation
-        pagination={{ clickable: true }}
+        loop={true}
+        modules={[Navigation, EffectFade, Autoplay]}
+        effect="fade"
+        navigation={{
+          nextEl: ".swiper-next-button",
+          prevEl: ".swiper-prev-button",
+        }}
+        pagination={{ el: ".swiper-pagination", type: "fraction" }}
         autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
+          delay: 5000,
         }}
-        className="mySwiper"
-        style={{
-          "--swiper-theme-color": "#B09B71",
-          "--swiper-navigation-size": "2rem",
-        }}
-        onSwiper={(swiper) => {}}
-        onSlideChange={() => {}}
       >
         {heroBanners.map((item, key) => (
           <SwiperSlide key={key}>
@@ -86,6 +37,43 @@ function HeroSlider() {
             />
           </SwiperSlide>
         ))}
+        <div className="absolute z-50 top-4 right-4">
+          <span className="swiper-pagination"></span>
+        </div>
+        <div className="flex items-center gap-4 absolute bottom-6 right-6 z-50">
+          <button className="h-14 w-14 bg-transparent rounded-full flex items-center justify-center border-2 border-primary-semi-light text-primary-semi-light transition-all hover:bg-primary-semi-light hover:text-primary-white hover:border-0 transform hover:scale-105 duration-500 translate-y-40 group-hover:translate-y-0 swiper-prev-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-8 h-8"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+              />
+            </svg>
+          </button>
+          <button className="h-14 w-14 bg-transparent rounded-full flex items-center justify-center border-2 border-primary-semi-light text-primary-semi-light transition-all hover:bg-primary-semi-light hover:text-primary-white hover:border-0 transform hover:scale-105 duration-300 translate-y-40 group-hover:translate-y-0 swiper-next-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+              />
+            </svg>
+          </button>
+        </div>
       </Swiper>
     </div>
   );
