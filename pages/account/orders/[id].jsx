@@ -52,7 +52,7 @@ export default function OrderPage({ order, refresh }) {
   const address = JSON.parse(order.address);
   const billingAddress = JSON.parse(order.billingAddress);
   let payment;
-  if (order.txnStatus == "") {
+  if (order.txnStatus == "Paid") {
     payment = JSON.parse(order.paymentInfo);
   }
 
