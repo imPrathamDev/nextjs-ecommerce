@@ -19,7 +19,7 @@ const ShippingAddress = ({
             <div className="flex flex-col">
               <span className="text-xs -mb-1">Saved Address</span>
               <span className="text-base truncate">
-                {selectedAddress.data
+                {selectedAddress
                   ? selectedAddress?.address
                   : "Use a new address"}
               </span>
