@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import connectdb from "../../../utils/connectMongo";
@@ -28,14 +28,14 @@ export async function getServerSideProps(context) {
 export default function OrderPage({ order, refresh }) {
   const router = useRouter();
   const { dispatch } = CartState();
-  const [subtotal, setSubtotal] = React.useState(0);
-  const [isOpen, setIsOpen] = React.useState(false);
-  React.useEffect(() => {
+  const [subtotal, setSubtotal] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
     setSubtotal(
       order.products.reduce((acc, cur) => acc + cur._id?.discPrice * cur.qty, 0)
     );
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     if (router.query.refresh === "true") {
       dispatch({
         type: "CLEAR_CART",
@@ -51,7 +51,10 @@ export default function OrderPage({ order, refresh }) {
 
   const address = JSON.parse(order.address);
   const billingAddress = JSON.parse(order.billingAddress);
-  const payment = JSON.parse(order.paymentInfo);
+  let payment;
+  if (order.txnStatus == "") {
+    payment = JSON.parse(order.paymentInfo);
+  }
 
   return (
     <Layouts>
@@ -215,46 +218,55 @@ export default function OrderPage({ order, refresh }) {
 
               <h4 className="sr-only">Payment</h4>
               <dl className="grid grid-cols-2 gap-x-6 border-t border-gray-200 text-sm py-10">
-                <div>
-                  <dt className="font-semibold text-primary-black text-base">
-                    Payment method
-                  </dt>
-                  <dd className="mt-2 text-gray-700">
-                    {payment.method === "netbanking" ? (
-                      <>
-                        <p>{payment.method.toUpperCase()}</p>
-                        <p>Bank: {payment.bank}</p>
-                      </>
-                    ) : payment.method === "card" ? (
-                      <>
-                        <p>
-                          {payment.card.type.toUpperCase()}{" "}
-                          {payment.method.toUpperCase()}
-                        </p>
-                        <p>{payment.card.name}</p>
-                        <p>**** **** **** {payment.card.last4}</p>
-                      </>
-                    ) : payment.method === "wallet" ? (
-                      <>
-                        <p>{payment.method.toUpperCase()}</p>
-                        <p>{payment.wallet}</p>
-                      </>
-                    ) : payment.method === "upi" ? (
-                      <>
-                        <p>{payment.method.toUpperCase()}</p>
-                        <p>UPI Id: {payment?.vpa}</p>
-                      </>
-                    ) : (
-                      <p>No Available</p>
-                    )}
-                    <p>
-                      At{" "}
-                      {moment(payment.created_at * 1000).format(
-                        "h:mm:ss a, [on] MMMM Do YYYY"
+                {payment ? (
+                  <div>
+                    <dt className="font-semibold text-primary-black text-base">
+                      Payment method
+                    </dt>
+                    <dd className="mt-2 text-gray-700">
+                      {payment.method === "netbanking" ? (
+                        <>
+                          <p>{payment.method.toUpperCase()}</p>
+                          <p>Bank: {payment.bank}</p>
+                        </>
+                      ) : payment.method === "card" ? (
+                        <>
+                          <p>
+                            {payment.card.type.toUpperCase()}{" "}
+                            {payment.method.toUpperCase()}
+                          </p>
+                          <p>{payment.card.name}</p>
+                          <p>**** **** **** {payment.card.last4}</p>
+                        </>
+                      ) : payment.method === "wallet" ? (
+                        <>
+                          <p>{payment.method.toUpperCase()}</p>
+                          <p>{payment.wallet}</p>
+                        </>
+                      ) : payment.method === "upi" ? (
+                        <>
+                          <p>{payment.method.toUpperCase()}</p>
+                          <p>UPI Id: {payment?.vpa}</p>
+                        </>
+                      ) : (
+                        <p>No Available</p>
                       )}
+                      <p>
+                        At{" "}
+                        {moment(payment.created_at * 1000).format(
+                          "h:mm:ss a, [on] MMMM Do YYYY"
+                        )}
+                      </p>
+                    </dd>
+                  </div>
+                ) : (
+                  <div className="my-2">
+                    <p className="font-semibold text-primary-black text-base">
+                      Pending
                     </p>
-                  </dd>
-                </div>
+                    <p className="my-1">Refresh this page for conformation.</p>
+                  </div>
+                )}
                 <div>
                   <dt className="font-semibold text-base text-primary-black">
                     Shipping method
