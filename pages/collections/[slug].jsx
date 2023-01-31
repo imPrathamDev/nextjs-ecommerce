@@ -9,8 +9,6 @@ import {
   StarIcon,
   ViewGridIcon,
 } from "@heroicons/react/solid";
-import connectdb from "../../utils/connectMongo";
-import Collection from "../../models/Collections";
 import ProductCard from "../../components/card/ProductCard";
 import NotFound from "../../components/sections/NotFound";
 import { useRouter } from "next/router";
@@ -33,15 +31,13 @@ function classNames(...classes) {
 
 export async function getServerSideProps(context) {
   const { slug } = context.params;
-
   const collection = await getCollection(slug);
   const products = await filterProducts(slug);
   const collections = await getCollections();
-
   return {
     props: {
       products: JSON.parse(JSON.stringify(products?.products)),
-      collection: JSON.parse(JSON.stringify(collection)),
+      collection: JSON.parse(JSON.stringify(collection?.collection)),
       collections: JSON.parse(JSON.stringify(collections?.collections)),
     },
   };
@@ -127,7 +123,6 @@ export default function SingleCollection({
     );
     setAllFilter(changeCheckedFilters);
   };
-  console.log("alllFunv", allFilter);
   const applyFilters = () => {
     let updatedList = products;
 
