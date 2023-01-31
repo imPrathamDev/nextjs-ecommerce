@@ -16,11 +16,7 @@ export async function getServerSideProps(context) {
   if (user) {
     const count = await User.countDocuments({ _id: user?._id });
     if (count > 0) {
-      orders = await Order.find(
-        { userId: user?._id, txnStatus: "Paid" },
-        null,
-        { limit: 4 }
-      )
+      orders = await Order.find({ userId: user?._id }, null, { limit: 4 })
         .populate("products._id")
         .sort({ createdAt: -1 });
     }
@@ -52,7 +48,7 @@ function MyAccount({ user, orders }) {
           </div>
 
           <div className="flex flex-col gap-y-6 lg:flex-row lg:justify-center mx-auto py-4 max-w-5xl">
-            <div className="lg:h-screen lg:sticky lg:top-20 mx-4 basis-1/4">
+            <div className="lg:h-screen lg:sticky lg:top-20 mx-4 lg:basis-1/4 relative">
               <h2 className="font-Cinzel font-medium text-lg text-primary-black">
                 Account Details
               </h2>
@@ -64,7 +60,7 @@ function MyAccount({ user, orders }) {
                   />
                   <div className="flex flex-col">
                     <p>{user?.name}</p>
-                    <p>{user?.email}</p>
+                    <p className="truncate w-5/6">{user?.email}</p>
                   </div>
                 </div>
                 <Link href="/account/address">
