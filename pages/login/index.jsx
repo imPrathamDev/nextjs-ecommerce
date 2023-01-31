@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { signIn, getSession, useSession } from "next-auth/react";
 import Layouts from "../../components/layouts/Layouts";
 import Toast from "../../components/Toast/Toast";
+import PageTitle from "../../components/PageTitle";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
@@ -24,11 +25,12 @@ export async function getServerSideProps(context) {
 function Login() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showToast, setShowToast] = useState({
     show: false,
     msg: "",
+    error: false,
   });
 
   React.useEffect(() => {
@@ -55,11 +57,14 @@ function Login() {
             email,
             password,
           });
-          console.log("Result => ", result);
           if (!result.ok) {
-            setShowToast({ show: true, msg: result.error });
+            setShowToast({ show: true, msg: result.error, error: true });
           } else {
-            setShowToast({ show: true, msg: "Login Successfully!" });
+            setShowToast({
+              show: true,
+              msg: "Login Successfully!",
+              error: false,
+            });
           }
         } catch (error) {
           setShowToast({
@@ -70,18 +75,20 @@ function Login() {
               error.response.data.message
                 ? error.response.data.message
                 : error.message,
+            error: true,
           });
         }
       } else {
-        setShowToast({ show: true, msg: "Password can't empty!" });
+        setShowToast({ show: true, msg: "Password can't empty!", error: true });
       }
     } else {
-      setShowToast({ show: true, msg: "Email can't empty!" });
+      setShowToast({ show: true, msg: "Email can't empty!", error: true });
     }
   };
   return (
     <Layouts>
       <div className="">
+        <PageTitle title={"Login"} />
         <Toast setShowToast={setShowToast} showToast={showToast} />
         <div className="flex justify-center h-screen">
           <div className="hidden bg-cover lg:block lg:w-2/3 relative">
