@@ -5,6 +5,17 @@ const secret = process.env.JWT_SECRET;
 
 export async function middleware(req) {
   if (
+    req.nextUrl.pathname.startsWith("/login") ||
+    req.nextUrl.pathname.startsWith("/register")
+  ) {
+    const token = await getToken({ req, secret });
+    if (!token) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/account", req.url));
+  }
+
+  if (
     req.nextUrl.pathname.startsWith("/account") ||
     req.nextUrl.pathname.startsWith("/checkout")
   ) {
@@ -21,15 +32,6 @@ export async function middleware(req) {
       return NextResponse.next();
     } else if (token?.type === "user") {
       return NextResponse.redirect(new URL("/account", req.url));
-    }
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  if (req.nextUrl.pathname.startsWith("/api/test")) {
-    const token = await getToken({ req, secret });
-    console.log("Token =>", token);
-    if (!token) {
-      return NextResponse.next();
     }
     return NextResponse.redirect(new URL("/", req.url));
   }
