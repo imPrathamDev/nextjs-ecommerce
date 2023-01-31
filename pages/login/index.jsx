@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import bgImage from "../../public/bg.jpg";
 import { useRouter } from "next/router";
@@ -13,7 +13,7 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         permanent: false,
-        destination: "/",
+        destination: "/register",
       },
     };
   }
@@ -33,7 +33,7 @@ function Login() {
     error: false,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (session) {
       router.push("/");
     }
