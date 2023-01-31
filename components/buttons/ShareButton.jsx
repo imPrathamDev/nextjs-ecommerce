@@ -108,8 +108,11 @@ function ShareButton({ product }) {
                       </span>
                     </div>
                   </div>
-                  <div className="mx-auto my-4 flex items-center justify-center gap-1">
-                    <EmailShareButton url={url}>
+                  <div className="mx-auto my-4 flex flex-wrap justify-center gap-1">
+                    <EmailShareButton
+                      url={url}
+                      style={{ flex: "0 0 calc(16.66% - 20px)" }}
+                    >
                       <div className="flex items-center gap-x-1 py-1 px-2 rounded-md transition-all hover:bg-white hover:text-primary">
                         <FiMail className="h-6 w-6" />
                         <span className="font-semibold">Mail</span>
