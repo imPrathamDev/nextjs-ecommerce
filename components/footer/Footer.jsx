@@ -13,13 +13,13 @@ function Footer() {
                   <img
                     src="/logo/logo-transparent.svg"
                     alt=""
-                    className="h-16 -ml-6"
+                    className="mx-auto h-20 lg:mx-0 lg:-ml-6"
                   />
                 </a>
               </Link>
             </div>
 
-            <p className="max-w-md mx-auto mt-6 leading-relaxed text-center text-gray-500 sm:max-w-xs sm:mx-0 sm:text-left">
+            <p className="max-w-md mx-auto mt-4 leading-relaxed text-center text-gray-500 sm:max-w-xs sm:mx-0 sm:text-left">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt
               consequuntur amet culpa cum itaque neque.
             </p>
