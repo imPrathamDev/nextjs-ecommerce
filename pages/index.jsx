@@ -26,7 +26,6 @@ export async function getStaticProps() {
 }
 
 export default function Home({ products, collections, newestProducts }) {
-  console.log(process.env.NEXT_PUBLIC_HOST);
   const easing = [0.6, -0.05, 0.01, 0.99];
   const fadeInUp = {
     initial: {
