@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import bgImage from "../../public/bg.jpg";
 import { useRouter } from "next/router";
