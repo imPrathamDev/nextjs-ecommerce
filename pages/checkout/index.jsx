@@ -149,18 +149,20 @@ function Checkout({ user }) {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderJSON.amount,
         currency: orderJSON.currency,
-        name: "Compamy Name",
+        name: "REALE",
         description: "Test Transaction",
-        image: "https://example.com/your_logo",
+        image:
+          "https://nextjs-ecommerce-woad.vercel.app/logo/logo-transparent-black.png",
         order_id: orderJSON.id,
-        callback_url: process.env.NEXT_PUBLIC_CALLBACK_URL,
+        callback_url:
+          "https://nextjs-ecommerce-woad.vercel.app/api/payments/postTranscation",
         prefill: {
           name: user?.name,
           email: user?.email,
           contact: shippingData?.phone,
         },
         notes: {
-          address: "ggg",
+          address: "NOT ADDED FOR NOW",
         },
         theme: {
           color: "#B09B71",
