@@ -2,31 +2,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import bgImage from "../../public/bg.jpg";
 import { useRouter } from "next/router";
-import { signIn, getSession, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Layouts from "../../components/layouts/Layouts";
 import Toast from "../../components/Toast/Toast";
 import PageTitle from "../../components/PageTitle";
 
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/register",
-      },
-    };
-  }
-  return {
-    props: {},
-  };
-}
-
 function Login() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [showToast, setShowToast] = useState({
     show: false,
     msg: "",
@@ -34,10 +19,10 @@ function Login() {
   });
 
   useEffect(() => {
-    if (session) {
-      router.push("/");
+    if (!showToast.show) {
+      if (isSuccess) router.push("/account");
     }
-  }, [session]);
+  }, [showToast]);
 
   const handlerChange = (e) => {
     if (e.target.name == "email") {
@@ -65,6 +50,7 @@ function Login() {
               msg: "Login Successfully!",
               error: false,
             });
+            setIsSuccess(true);
           }
         } catch (error) {
           setShowToast({
@@ -105,7 +91,7 @@ function Login() {
             <div className="relative max-w-screen-xl flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
               <div>
                 <img
-                  src="/logo/logo-transparent-white.png"
+                  src="/logo/logo-transparent-white.svg"
                   alt=""
                   className="h-20 -ml-8"
                 />
