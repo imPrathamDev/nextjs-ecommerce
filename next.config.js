@@ -2,7 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['images.unsplash.com', 'cdn.shopify.com', 'avatars.dicebear.com', 'firebasestorage.googleapis.com'],
+    domains: [
+      "images.unsplash.com",
+      "cdn.shopify.com",
+      "avatars.dicebear.com",
+      "firebasestorage.googleapis.com",
+    ],
   },
   experimental: {
     scrollRestoration: true,
@@ -10,11 +15,11 @@ const nextConfig = {
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"]
+      use: ["@svgr/webpack"],
     });
 
     return config;
-  }
-}
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
