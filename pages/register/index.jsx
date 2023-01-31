@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import Layouts from "../../components/layouts/Layouts";
 import Toast from "../../components/Toast/Toast";
+import PageTitle from "../../components/PageTitle";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
@@ -22,14 +23,14 @@ export async function getServerSideProps(context) {
 
 function Register() {
   const router = useRouter();
-
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showToast, setShowToast] = useState({
-    show: true,
+    show: false,
     msg: "",
+    error: false,
   });
 
   const handlerChange = (e) => {
@@ -46,47 +47,42 @@ function Register() {
 
   const handlerSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/users/SignUp`,
-      {
-        // Adding method type
-        method: "POST",
-
-        // Adding body or contents to send
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-
-        // Adding headers to the request
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/SignUp`, {
+      method: "POST",
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
 
     let response = await res.json();
     if (response.success) {
       setShowToast({
         show: true,
         msg: "Account created!",
+        error: false,
       });
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
     } else {
       setShowToast({
         show: true,
-        msg: "Oops! Error",
+        msg: response.error,
+        error: true,
       });
     }
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setPassword("");
   };
   return (
     <Layouts>
       <div className="">
+        <PageTitle title={"Register"} />
         <Toast showToast={showToast} setShowToast={setShowToast} />
         <div className="flex justify-center h-screen">
           <div className="hidden bg-cover lg:block lg:w-2/3 relative">
@@ -102,7 +98,7 @@ function Register() {
             <div className="relative max-w-screen-xl flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
               <div>
                 <img
-                  src="/logo/logo-transparent-white.png"
+                  src="/logo/logo-transparent-white.svg"
                   alt=""
                   className="h-20 -ml-8"
                 />
