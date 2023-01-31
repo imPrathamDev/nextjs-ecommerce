@@ -122,21 +122,22 @@ export default function OrderPage({ order, refresh }) {
                 key={product._id._id}
                 className="py-10 border-b border-gray-200 flex space-x-6 group"
               >
-                <Image
-                  src={product._id?.images[0]?.url}
-                  alt={product._id?.images[0]?.alt}
-                  width={"160px"}
-                  height={"160px"}
-                  className="flex-none object-center object-cover bg-gray-100 rounded-lg sm:w-40 sm:h-40 transition-all transform group-hover:scale-105"
-                />
-                <div className="flex-auto flex flex-col">
+                <div className="lg:w-1/4 relative overflow-hidden">
+                  <Image
+                    src={product._id?.images[0]?.url}
+                    alt={product._id?.images[0]?.alt}
+                    layout="fill"
+                    className="flex-none object-center object-cover bg-gray-100 rounded-lg w-52 h-52 sm:w-40 sm:h-40 transition-all transform group-hover:scale-105"
+                  />
+                </div>
+                <div className="flex-auto flex flex-col lg:w-3/4">
                   <div>
-                    <h4 className="font-medium font-Cinzel text-lg text-primary-black hover:underline hover:text-primary transition-all">
+                    <h4 className="font-medium font-Cinzel text-base lg:text-lg text-primary-black hover:underline hover:text-primary transition-all">
                       <Link href={`/shop/${product._id?.slug}`}>
                         {product._id?.title}
                       </Link>
                     </h4>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-2 text-xs lg:text-sm text-gray-600">
                       {product._id?.shortDesc}
                     </p>
                   </div>
