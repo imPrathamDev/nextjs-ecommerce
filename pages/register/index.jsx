@@ -1,25 +1,9 @@
 import { useState } from "react";
 import Link from "next/link";
-import { getSession } from "next-auth/react";
 import Layouts from "../../components/layouts/Layouts";
 import Toast from "../../components/Toast/Toast";
 import PageTitle from "../../components/PageTitle";
 import { useRouter } from "next/router";
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/",
-      },
-    };
-  }
-  return {
-    props: {},
-  };
-}
 
 function Register() {
   const router = useRouter();
@@ -64,7 +48,7 @@ function Register() {
     if (response.success) {
       setShowToast({
         show: true,
-        msg: "Account created!",
+        msg: "Account created",
         error: false,
       });
       setFirstName("");
