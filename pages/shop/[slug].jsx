@@ -4,7 +4,6 @@ import Zoom from "react-medium-image-zoom";
 import { CartState } from "../../context/Context";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import "react-medium-image-zoom/dist/styles.css";
 import Reviews from "../../components/sections/Reviews";
 import ShareButton from "../../components/buttons/ShareButton";
 import { motion } from "framer-motion";
@@ -15,6 +14,8 @@ import Layouts from "../../components/layouts/Layouts";
 import PageTitle from "../../components/PageTitle";
 import { getProduct, getProducts } from "../../dbOperations/productOperations";
 import { getReviews } from "../../dbOperations/reviewOperations";
+import "react-medium-image-zoom/dist/styles.css";
+import Toast from "../../components/Toast/Toast";
 
 export async function getServerSideProps(context) {
   const {
@@ -58,6 +59,7 @@ function ProductPage({ product, reviews, relatedProducts }) {
   const [cart, setCart] = React.useState([]);
   const [currImage, setCurrImage] = React.useState(product?.images?.[0]);
   const [isWishListed, setIsWishListed] = useState(false);
+  const [toast, setToast] = useState({ show: false, msg: "", error: false });
 
   async function addToWishlist() {
     if (session) {
@@ -73,8 +75,14 @@ function ProductPage({ product, reviews, relatedProducts }) {
       const wlData = await wlRes.json();
       if (wlData.success) {
         setIsWishListed(true);
+        setToast({ show: true, msg: "Added to wishlist", error: false });
       } else {
         setIsWishListed(false);
+        setToast({
+          show: true,
+          msg: "Oops something went wrong",
+          error: true,
+        });
       }
     }
   }
@@ -93,8 +101,10 @@ function ProductPage({ product, reviews, relatedProducts }) {
       const wlData = await wlRes.json();
       if (wlData.success) {
         setIsWishListed(false);
+        setToast({ show: true, msg: "Removed from wishlist", error: false });
       } else {
         setIsWishListed(true);
+        setToast({ show: true, msg: "Oops something went wrong", error: true });
       }
     }
   }
@@ -142,14 +152,23 @@ function ProductPage({ product, reviews, relatedProducts }) {
     checkItemInWishList();
   }, []);
 
+  const url = new URL(
+    "https://og-image-nextjs.vercel.app/api/generate-og-image-playwrite"
+  );
+  url.searchParams.set("title", product.title);
+  url.searchParams.set("desc", product.shortDesc);
+  url.searchParams.set("price", product.price);
+  url.searchParams.set("discPrice", product.discPrice);
+  url.searchParams.set("imageURL", product.images[0]?.url);
   return (
     <Layouts>
       <PageTitle
         title={product.title}
         description={product.shortDesc}
         keywords={product.tags.join(",")}
-        image={`https://og-image-nextjs.vercel.app/api/generate-og-image-playwrite?title=${product.title}&desc=${product.shortDes}&price=${product.price}&discPrice=${product.discPrice}&imageURL=${product.images[0].url}`}
+        image={url}
       />
+      <Toast showToast={toast} setShowToast={setToast} />
       <motion.div exit={{ opacity: 0 }}>
         <section className="text-gray-600 overflow-hidden">
           <div className="container px-5 py-12 mx-auto">
