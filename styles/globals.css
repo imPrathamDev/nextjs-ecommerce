@@ -31,6 +31,28 @@
   .custom-scrollbar-dark::-webkit-scrollbar-thumb {
     background-color: #eddfb3;
   }
+
+  .cutoff-text {
+    --limit-line: 2;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--limit-line);
+  }
+
+  testGrid:last-child:nth-child(3n - 1) {
+    grid-column-end: -2;
+  }
+
+  testGrid:nth-last-child(2):nth-child(3n + 1) {
+    grid-column-end: 4;
+  }
+
+  /* Dealing with single orphan */
+
+  testGrid:last-child:nth-child(3n - 2) {
+    grid-column-end: 5;
+  }
 }
 
 /* Chrome, Safari, Edge, Opera */
