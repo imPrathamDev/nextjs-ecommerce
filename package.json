@@ -33,7 +33,6 @@
     "react-range": "^1.8.14",
     "react-share": "^4.4.0",
     "react-star-rate": "^0.2.0",
-    "react-toastify": "^9.0.5",
     "shortid": "^2.2.16",
     "swiper": "^8.3.2"
   },
