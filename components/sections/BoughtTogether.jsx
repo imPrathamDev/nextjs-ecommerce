@@ -9,7 +9,7 @@ function BoughtTogether({ product }) {
       <h3 className="text-2xl font-medium font-Cinzel text-primary-black">
         Frequently Bought Together
       </h3>
-      <div className="my-4 grid grid-cols-2 xl:grid-cols-3 lg:grid-cols-3 justify-center items-center gap-0.5">
+      <div className="my-4 grid grid-cols-1 lg:grid-cols-3 lg:justify-center items-center gap-0.5">
         {product.map((item) => (
           <React.Fragment key={item?._id?._id}>
             <ProductCard allData={item?._id} />
