@@ -14,7 +14,7 @@ function ProductCard({ allData }) {
   }, [cartItems]);
 
   return (
-    <div className="lg:w-[300px] px-2 py-4 xl:px-4 xl:py-6 block xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105">
+    <div className="lg:w-[300px] px-2 py-4 xl:px-4 xl:py-6 xl:text-left text-center group cursor-pointer transition-all transform hover:scale-105 flex flex-col justify-center items-center lg:block lg:items-start">
       <div className="">
         <Image
           src={allData?.images?.[0]?.url}
@@ -28,7 +28,7 @@ function ProductCard({ allData }) {
       <div className="mt-2">
         <Link href={`/shop/${allData?.slug}`}>
           <a>
-            <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline w-fit">
+            <h5 className="text-primary-black font-Cinzel font-medium transition-all hover:text-primary hover:underline w-fit cutoff-text">
               {allData.title}
             </h5>
           </a>
