@@ -7,6 +7,7 @@ const nextConfig = {
       "cdn.shopify.com",
       "avatars.dicebear.com",
       "firebasestorage.googleapis.com",
+      "v1-ecommerce.impratham.dev",
     ],
   },
   experimental: {
